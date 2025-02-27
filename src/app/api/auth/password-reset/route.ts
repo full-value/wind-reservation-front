@@ -1,0 +1,38 @@
+import { NextResponse } from 'next/server';
+
+export async function POST(req: Request) {
+  try {
+
+    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
+
+    const body = await req.json();
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+
+    const res = await fetch(`${API_BASE_URL}/api/auth/password-reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    if (!res.ok) {
+      const errorText = await res.text(); // Log the server's raw response for debugging
+      console.error('Server Error:', errorText);
+      return NextResponse.json({ error: 'Failed to login' }, { status: res.status });
+    }
+
+    const data = await res.json();
+    return NextResponse.json(data);
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.error('Request timed out');
+      return NextResponse.json({ error: 'Request timed out' }, { status: 408 });
+    }
+    console.error('Fetch failed:', error);
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
+  }
+}

@@ -1,0 +1,35 @@
+import { NextResponse } from 'next/server';
+import { getCookie, deleteCookie } from '@/utils/cookieUtils';
+import { fetchWithAuth } from '@/utils/fetchUtils';
+
+
+export async function POST(req: Request) {
+
+  const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
+  const refreshToken = await getCookie('refreshToken');
+
+  try {
+    const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/logout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+    
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      return NextResponse.json(
+        { error: errorData.message || 'Logout failed' },
+        { status: res.status }
+      );
+    }
+    await deleteCookie('accessToken');
+    await deleteCookie('refreshToken');
+    return NextResponse.json({ message: 'Logout successful' }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'An error occurred during logout' },
+      { status: 500 }
+    );
+  }
+}
