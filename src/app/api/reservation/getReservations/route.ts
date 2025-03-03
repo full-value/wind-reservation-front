@@ -3,14 +3,15 @@ import { fetchWithAuth } from '@/utils/fetchUtils';
 
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api';
-const BASE_URL = `${API_BASE_URL}/api/reservation/getReservations`;
+const BASE_URL = `${API_BASE_URL}/reservation/getReservations`;
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {  
-    
+    const requestBody = await req.json();
     const response = await fetchWithAuth(BASE_URL, {
-      method: 'GET',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json'},     
+      body: JSON.stringify(requestBody),
     });
 
     // Get the raw response body to inspect it

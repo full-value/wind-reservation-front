@@ -1,9 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/app/layout/DashboardLayout';
 import { FaSearch, FaSort } from "react-icons/fa";
-import MessageIcon from '@public/assets/icons/message_icon.svg';
-import BellIcon from '@public/assets/icons/notification-01.svg';
 import { useDashboard } from '@/hooks/useDashboard';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
@@ -25,8 +24,7 @@ const Message = () => {
     setCurrentPage(page);
   };
 
-  useEffect(() => {
-    
+  useEffect(() => {    
     const fetchData = async () => {
       try {
         const data = await getErrorLogData();
@@ -40,7 +38,7 @@ const Message = () => {
 
   
 
-  const handleSearch = (e: any) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement> ) => {
     setSearchTerm(e.target.value);
   };
 

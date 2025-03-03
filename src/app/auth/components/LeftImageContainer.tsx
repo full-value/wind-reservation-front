@@ -1,33 +1,17 @@
 import React from 'react';
-import Image from "next/image";
+import Image from 'next/image';
 
-type Props = {}
-
-const LeftImageContainer = (props: Props) => {
+const LeftImageContainer = () => {
   return (
     <div className="absolute inset-2 md:bg-[url('/assets/images/auth/auth_bg2.png')] bg-cover bg-no-repeat rounded-[10px]">
-      {/* <Image
-        className="absolute w-[320px] h-[80px]  top-[40px] left-1/2 transform -translate-x-[100%] -translate-y-1/2"
-        src="/assets/images/auth/logo.png"
-        alt="green"
-        width={145}
-        height={40}
-        priority
-      /> */}
-      <div className="absolute inset-0 rounded-[10px]"></div>
+      <div className="absolute inset-0 rounded-[10px] bg-black opacity-15 w-full h-full"></div>
       <div className="absolute w-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center z-10">
-        <p className="font-semibold text-[110px] mb-[50px] leading-[20px] tracking-[-0.05em] text-[#DB5353]">予約システム</p>
-        <h1 className="flex items-center justify-center font-black text-[95px] leading-[48px] tracking-[-0.06em] text-center text-[#CDDB49]">Taiy<div className="w-14 h-14 rounded-full bg-[#ECF94B] border-[10px] border-[#DB3535] border-solid"></div>P.U.S</h1>
-        <p className="font-normal text-[40px] mt-9 leading-[24px] tracking-[-0.06em] text-[#DB5353]">株式会社タイヨーP.U.S</p>
+        <p className="font-semibold text-[110px] mb-[50px] leading-[20px] tracking-[-0.05em] text-[#d7f140] drop-shadow-[20px_20px_40px_rgba(230,230,0,19)]">予約システム</p>
+        <div className="flex justify-center items-center">
+          <Image src="/assets/images/auth/logo.png" alt="logo" width={130} height={130} className="drop-shadow-[4px_4px_10px_rgba(30,230,230,0.9)]"  priority />
+          <p className="font-bold text-[120px] text-[#005596] drop-shadow-[4px_4px_10px_rgba(30,230,230,0.9)]"><span className="text-[#e6494f] text-[100px]">in</span>g</p>
+        </div>       
       </div>
-      {/* <Image
-        className="absolute top-1/2 left-1/3 transform -translate-x-[50%] -translate-y-1/2"
-        src="/assets/images/auth/green-effect.png"
-        alt="green"
-        width={230.6}
-        height={60.81}
-        priority
-      /> */}
     </div>
   )
 }

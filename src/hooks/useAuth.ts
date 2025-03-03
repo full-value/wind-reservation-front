@@ -18,21 +18,23 @@ type LoginVariables = { email: string; password: string };
 type LoginResponse = { token:string;accessToken: string; refreshToken: string;role:string };
 
 
-// Login API function
 const login = async (credentials: LoginVariables): Promise<LoginResponse> => {
   const res = await fetch('/api/auth/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
     body: JSON.stringify(credentials),
   });
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.error || 'Login failed');
-  };
-
-  return res.json();
+    throw new Error(errorData.message );
+  }
+  return await res.json();
 };
+
 
 // Register API function
 type RegisterVariables = { email: string; password: string };
@@ -47,6 +49,7 @@ const register = async (data: RegisterVariables): Promise<RegisterResponse> => {
 
   if (!res.ok) {
     const errorData = await res.json();
+    console.log("this is auth data",errorData)
     throw new Error(errorData.message || 'Registration failed');
   }
   return res.json();
@@ -56,7 +59,6 @@ const register = async (data: RegisterVariables): Promise<RegisterResponse> => {
 type LogoutResponse = { message: string };
 
 const logout = async (): Promise<LogoutResponse> => {
-
     const res = await fetch('/api/auth/logout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -113,12 +115,11 @@ export const useLogin = () => {
 
   return useMutation<LoginResponse, Error, LoginVariables>({
     mutationFn: login,
-    onSuccess: (data) => {
+    onSuccess: () => {
       setAuthenticatedUser(true);
       notify('success', 'ログインしました', 'ログインに成功しました!')
     },
     onError: (error) => {
-      console.log(error.message)
       notify('error', '間違った詳細', error.message)
     }
   });
@@ -161,12 +162,12 @@ export const useLogout = () => {
     onSuccess: () => {
       setAuthenticatedUser(false);    
       queryClient.invalidateQueries();
-      router.push('/auth/login');      
+      router.push('/chat');      
       notify('success', '成功', 'ログアウトに成功しました!');
     },
     onError: () => {
       setAuthenticatedUser(false);
-      router.push('/auth/login');
+      router.push('/chat');
       notify('error', 'エラー', 'ログアウトに失敗しました!');
     },
   });

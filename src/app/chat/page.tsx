@@ -1,27 +1,14 @@
 'use client';
-
-import { useState } from 'react';
-import { useLogout } from '@/hooks/useAuth';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
 import ChatIcon from '@public/assets/images/icon/chat-icon.svg';
 import EyeIcon from '@public/assets/icons/eye_icon.svg';
-import LogoutIcon from '@public/assets/icons/logout.svg';
+import LoginIcon from '@public/assets/icons/login.svg';
 import ChatContainer from '@/app/chat/components/chat';
+import Image from 'next/image';
 
-type Props = {};
 
-const Chat = (props: Props) => {
-  const router = useRouter();
-  const { mutate, status } = useLogout();  
-
-  const logout = ()=>{
-    router.push('/auth/login');
-    useLogout();
-         
-  }
-
+const Chat = () => {
+ 
   return (
     <div className="w-full">
       <div data-ui-testid="navBar" className="flex items-center bg-gradient-to-r from-[#7924dd] to-blue-400 px-20 justify-end gap-[10px]">
@@ -43,9 +30,8 @@ const Chat = (props: Props) => {
         </ul>
         <div 
           className="flex flex-col justify-center items-center gap-2 cursor-pointer"
-          onClick={()=>logout()}
         >
-          <Link href="/auth/reset-password"><LogoutIcon className="w-8 h-8 text-white hover:text-[#00f04f]" /></Link>
+          <Link href="/auth/login"><LoginIcon className="w-8 h-8 text-white hover:text-[#00f04f]" /></Link>
         </div>
       </div>
       <div className="flex flex-col inset-0 bg-[url('/assets/images/download.webp')] bg-cover bg-no-repeat  py-[9.5vh] ">
@@ -53,11 +39,14 @@ const Chat = (props: Props) => {
           <div className="flex flex-col w-[70%] bg-[#FFFFFF] p-5 rounded-[20px] relative overflow-y-auto">
             <ChatContainer />
           </div>
-          <div className="flex flex-col w-[30%] bg-[#83d0e4] p-5 rounded-[20px] relative items-center text-center pointer-events-none">
-            <img
+          <div className="flex flex-col w-[500px] bg-[#83d0e4] p-5 rounded-[20px] relative items-center text-center pointer-events-none">
+            <Image
               src="/assets/images/consultant.png"
               alt="consultant"
-              className="absolute bottom-0 left-1/2 w-[300px] h-auto select-none ease-in-out duration-200 transform -translate-x-1/2"
+              className="absolute bottom-0 left-1/2 w-[400px] h-auto select-none ease-in-out duration-200 transform -translate-x-1/2"
+              width={300} 
+              height={300}
+              priority 
             />
           </div>
         </div>

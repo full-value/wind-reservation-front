@@ -6,13 +6,29 @@ import Button from '@/app/chat/components/buttonComponent';
 import Image from "next/image";
 import clsx from "clsx";
 
+
+interface Option {
+  id: string;
+  reservation_time: string;
+  division: string;
+  work_name?: string;
+  name?: string;
+  address?: string;
+  type?: string;
+  flat_name: string;
+  room_num: string;
+  description?: string;
+  availableDates?: string[];
+  [key: string]: unknown; // You can add more dynamic fields if needed
+};
+
+
 const Chat = () => {
-  const { chatData, setField,resetForm } = useChatStore();
+  const { chatData, resetForm } = useChatStore(); 
   const [showOptions, setShowOptions] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState('');
-  const [selectedValue,setSelectedValue] = useState('null');
+  const [selectedValue, setSelectedValue] = useState('null');
   const hasMounted = useRef(false);
   const typingDelay = 25;
   
@@ -36,7 +52,7 @@ const Chat = () => {
       messageEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
     hasMounted.current = true;
-  }, [messages]);
+  }, [messages, resetForm]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>,reqType:string) => {
     if (e.key === 'Enter') {
@@ -52,10 +68,12 @@ const Chat = () => {
     <div className="flex flex-col w-full gap-[10px]" style={{ maxHeight: '800px', overflowY: 'scroll' }}>
       {messages.map((message, index) => (
         <div key={index} className={`flex gap-2 mt-3 ${messages.length !== 1 && messages.length!== index+1 && "pointer-events-none"}`}>
-          <img
+          <Image
             src="/assets/images/avatars/avatar.png"
-            alt=""
-            className="w-[30px] h-[30px] rounded-full border-2 border-[#83d0e4] flex items-center justify-center"
+            alt="Avatar"
+            width={100}   
+            height={100} 
+            className="flex w-[80px] h-[80px] rounded-full border-2 border-[#83d0e4]"
           />
           <div className="flex flex-col flex-wrap w-full relative font-normal leading-[28px] text-[#6C73A8] text-[17px] break-all">
               <Typewriter
@@ -94,7 +112,8 @@ const Chat = () => {
             {message.type === 'select' && showOptions && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px]">
                 {Array.isArray(message.options) &&
-                  message.options.map((option: any, idx: number) => {
+                  message.options.map((option: Option, idx: number) => {
+                    
                     const fieldMap: Record<string, keyof typeof option> = {
                       work: "work_name",
                       name: "name",
@@ -104,15 +123,21 @@ const Chat = () => {
                       availableDates: "availableDates"
                     };
 
-                    let columnKey = message.column?.[0] ?? ""; 
-                    let displayValue = columnKey && fieldMap[columnKey] ? option[fieldMap[columnKey]] : "";
+                    const columnKey = message.column?.[0] ?? ""; 
+                    const displayValue = columnKey && fieldMap[columnKey] ? option[fieldMap[columnKey]] : "";
                     
                       return (
                         <div key={idx} className="flex gap-5">
-                          <label className="flex items-center gap-2 cursor-pointer text-orange-950" onClick={() => setSelectedValue(displayValue?displayValue:option)}>
-                            <input type="radio" name={message.column[0]}  value={displayValue?displayValue:option} required />
-                              {displayValue?displayValue:option}
-                            <p className="text-[#F352A2]">{option.address}</p>
+                          <label 
+                            className="flex items-center gap-2 cursor-pointer text-orange-950" 
+                            onClick={() => setSelectedValue(displayValue ? String(displayValue) : String(option))}>
+                            <input 
+                              type="radio" 
+                              name={message.column[0]}  
+                              value={displayValue ? String(displayValue) : String(option)} 
+                              required 
+                            />
+                            {displayValue ? String(displayValue) : String(option)}
                           </label>
                         </div>
                       );
@@ -178,7 +203,6 @@ const Chat = () => {
                   <thead>
                     <tr>
                       <th className="px-4 py-3 text-left bg-gray-100 font-bold border-b-2 border-gray-300">予約番号</th>
-                      <th className="px-4 py-3 text-left bg-gray-100 font-bold border-b-2 border-gray-300">ユーザー名</th>
                       <th className="px-4 py-3 text-left bg-gray-100 font-bold border-b-2 border-gray-300">物件名</th>
                       <th className="px-4 py-3 text-left bg-gray-100 font-bold border-b-2 border-gray-300">部屋番号</th>
                       <th className="px-4 py-3 text-left bg-gray-100 font-bold border-b-2 border-gray-300">作業内容</th>
@@ -187,11 +211,12 @@ const Chat = () => {
                     </tr>
                   </thead>
                   <tbody>
-                  {message.options.map((option: any, idx: number) => {
+                  {
+                  
+                  message.options.map((option: Option, idx: number) => {
                     return (
                       <tr key={idx} className="hover:bg-gray-100 even:bg-gray-50 odd:bg-white">
                         <td className="px-4 py-3 border-b border-gray-300">{option.id}</td>
-                        <td className="px-4 py-3 border-b border-gray-300">{option.user_name}</td>
                         <td className="px-4 py-3 border-b border-gray-300">{option.flat_name}</td>
                         <td className="px-4 py-3 border-b border-gray-300">{option.room_num}</td>
                         <td className="px-4 py-3 border-b border-gray-300">{option.work_name}</td>
@@ -203,7 +228,7 @@ const Chat = () => {
                   </tbody>
                 </table>
                 <div className="flex gap-6 mt-5 justify-end">  
-                  <Button  label='戻る' onClickHandler={()=>handleBackClick()}/>
+                  <Button  label='戻る' onClickHandler={()=>handleButtonClick("戻る",'')}/>
                 </div>
               </div>
             )}

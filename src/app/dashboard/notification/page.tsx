@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/app/layout/DashboardLayout';
 import { FaSearch, FaSort } from "react-icons/fa";
@@ -20,12 +21,22 @@ const Notification = () => {
   const { NotificationNum, setField } = useNotificationData();
   const itemsPerPage = 10;
 
+  interface Notification {
+    id: number;
+    message: string;
+    isRead?: boolean;
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getNotification();                  
+        const data = await getNotification();
+        
+        // Assuming `data.notificationData` is an array of Notification objects
         setNotificationData(
-          data.notificationData.map(n => ({ ...n, isRead: n.isRead ?? false })) // Ensure boolean
+          data.notificationData.map((n: Notification) => ({
+            ...n,
+            isRead: n.isRead ?? false, // Ensure isRead is a boolean
+          }))
         );
       } catch (error) {
         console.error("Error fetching data", error);
@@ -33,12 +44,11 @@ const Notification = () => {
     };
     fetchData();
   }, []);
-
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
   };
 
-  const handleSearch = (e: any) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 

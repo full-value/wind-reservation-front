@@ -16,15 +16,15 @@ export interface ChatMessage {
 export const chatMessages: { [key: string]: ChatMessage } = {
   welcome: {
     type: 'button',    
-    content: 'こんにちは!🙂<br/>私たちのサイトにお越しいただきありがとうございます。<br/>私は、Full Value社の予約管理エージェント、エミーです。<br/>予約の登録や変更方法、その手続きについてご案内できます。<br/>どのようなお手伝いが必要でしょうか？',
+    content: 'こんにちは!🙂<br/>私たちのサイトにお越しいただきありがとうございます。<br/>私は、Full Value社の予約管理エージェント、エミーです。<br/>予約の変更方法、その手続きについてご案内できます。<br/>どのようなお手伝いが必要でしょうか？',
     
-    options: ['新しい予約', '予約変更', '予約照会'],
+    options: ['予約変更', '予約照会'],
     reqType: ['return']
   },
   welcomeAgain:{
     type: 'button',    
-    content: '予約登録や予約変更など、私はどのようにもっとお手伝いできますか？',
-    options: ['新しい予約', '予約変更', '予約照会'],
+    content: '私はどのようにもっとお手伝いできますか？',
+    options: ['予約変更', '予約照会'],
     reqType: ['return']
   },
   viewReservationListError:{
@@ -34,6 +34,11 @@ export const chatMessages: { [key: string]: ChatMessage } = {
     reqType: ['return']
   },
   新しい予約: {
+    type: 'input',
+    content: 'マンション名を⼊⼒してください!<br>下の入力ウィンドウにメンション名を入力し、エンターガンを押してください。（メンション名のみを入力してください。）',
+    reqType: ['findFlat']
+  },
+  予約照会: {
     type: 'input',
     content: 'マンション名を⼊⼒してください!<br>下の入力ウィンドウにメンション名を入力し、エンターガンを押してください。（メンション名のみを入力してください。）',
     reqType: ['findFlat']
@@ -76,9 +81,15 @@ export const chatMessages: { [key: string]: ChatMessage } = {
     content: '部屋番号のみを正確に入力してください。',
     reqType: ['inputRoomNum']
   },
+  findUpdateDateError:{
+    type: 'button',    
+    content: '予約可能な日付はありません。',
+    options: ['戻る',],
+    reqType: ['return']
+  },
   inputRoomNumNullError: {
     type: 'input',
-    content: '予約された部屋番号には作業がありません。別の部屋番号を入力してください',
+    content: '入力した部屋番号には作業がありません。別の部屋番号を入力してください',
     reqType: ['inputRoomNum']
   },
   inputRoomNumSucess_add: {

@@ -5,8 +5,7 @@ import { chatMessages } from '@/data/chatMessages';
 export const useChatHandler = () => {
   const { chatData, setField,resetForm } = useChatStore();
   const [messages, setMessages] = useState<any[]>([]); 
-  const hasMounted = useRef(false);
-  const [token, setToken] = useState<string | null>(null);
+  const hasMounted = useRef(false);  
 
   const addMessage = (newMessage: any) => {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -18,13 +17,9 @@ export const useChatHandler = () => {
   useEffect(() => {
     if (!hasMounted.current) {
       addMessage(chatMessages.welcome);
-    }
-    if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("token");
-      setToken(storedToken); 
     }    
     hasMounted.current = true;
-  }, []);
+  }, [chatMessages]);
 
   const handleButtonClick = async (option: string, value:string) => {
     if (option === "変更する") {
@@ -33,13 +28,12 @@ export const useChatHandler = () => {
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({reservation_id:value}),
       });
-      setField('changeReservationId',value);
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'search failed');
-      }
+      setField('changeReservationId',value);      
       const data = await res.json();
       chatMessages.selectReservationDate.options = data.availableDates;
+      if (!data.availableDates || data.availableDates.length === 0){
+        return addMessage(chatMessages.findUpdateDateError);;
+      }
       return addMessage(chatMessages.selectReservationDate);
     } else if(option === "はい"){
       const res = await fetch('/api/reservation/updateReservation', {
@@ -59,25 +53,7 @@ export const useChatHandler = () => {
     } else if(option === "いいえ" || option === "戻る"|| option === "次へ"  || option === "終了" || option === "変更しない"){
       resetForm(); 
       return addMessage(chatMessages.welcomeAgain);
-    }else if (option === "予約照会"){           
-      const res = await fetch('/api/reservation/getReservations', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json'},        
-      });
-    
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'search failed');
-      }
-      const data = await res.json();
-      console.log("this hoook data",data); 
-      if(!!data.message){
-        return addMessage(chatMessages.viewReservationListError);
-      }           
-      chatMessages.viewReservationList.options = data;
-      return addMessage(chatMessages.viewReservationList);
-    }
-    
+    }   
     resetForm();     
     setField('requirement',option);
     return addMessage(chatMessages[option]);
@@ -109,20 +85,28 @@ export const useChatHandler = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
           body: JSON.stringify({room_num:value,flat_name:chatData.flatName}),
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.message || 'search failed');
-        }
-        const data = await res.json();
-        setField("roomNum",value);
+        });      
+       
+        const data = await res.json();       
+        
         if(!!data.message){
           return addMessage(chatMessages.inputRoomNumNullError);
         }
-        if (chatData.requirement === "新しい予約") {
-          chatMessages.inputRoomNumSucess_add.options = data;
-          return addMessage(chatMessages.inputRoomNumSucess_add);
+        setField("roomNum",value);
+        if(chatData.requirement === "予約照会"){
+          const res = await fetch('/api/reservation/getReservations', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json'},
+              body: JSON.stringify({flat_name:chatData.flatName,room_num:value}),        
+            });
+          
+            if (!res.ok) {
+              const errorData = await res.json();
+              throw new Error(errorData.message || 'search failed');
+            }
+            const data = await res.json();
+            chatMessages.viewReservationList.options = data;
+            return addMessage(chatMessages.viewReservationList);
         }else if(chatData.requirement === "予約変更"){
           chatMessages.inputRoomNumSucess_edit.options = data;
           return addMessage(chatMessages.inputRoomNumSucess_edit);
@@ -156,23 +140,18 @@ export const useChatHandler = () => {
     }
   }
   const handleSelectClick = async (value:string, reqType:string) =>{     
-    console.log(value,reqType);  
     if (reqType === "selectFlat") {          
-          
       if (String(value) === "null") {   
         return addMessage(chatMessages.selectFlatError);        
-        
       }else{
         setField('flatName',value);     
         return addMessage(chatMessages.inputRoomNum);
       }
-      
     } else if (reqType === "selectWork"){   
       if (String(value) === "null") {  
         setTimeout(() => {
           removeMessage();
         }, 300);
-                 
         return addMessage(chatMessages.selectWorkError);
       }else{  
         setField('workName', value);
@@ -182,7 +161,6 @@ export const useChatHandler = () => {
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({work_name:value,flat_name:chatData.flatName,room_num:chatData.roomNum}),
           });
-
           if (!res.ok) {
             const errorData = await res.json();
             throw new Error(errorData.message || 'search failed');
@@ -192,13 +170,15 @@ export const useChatHandler = () => {
           return addMessage(chatMessages.selectReservationDate);
         }else if(chatData.requirement === "予約変更"){
           return addMessage(chatMessages.inputBookedReservationNum);
-        } 
+        }
       }      
-    } else if(reqType === "selectDivision"){
-
+    } else if(reqType === "selectDivision"){      
+            
+      if (isNaN(new Date(value).getTime())) {
+        return;
+      }
       setField('changeReservationDate', value);
       return addMessage(chatMessages.selectDivision);
-
     }else if(reqType === "reservate"){
       setField('changeReservationDivision', value);
       if (chatData.requirement === "新しい予約") {
@@ -216,6 +196,9 @@ export const useChatHandler = () => {
         console.log(data);      
         return addMessage(chatMessages.bookedReservation);
       }else if (chatData.requirement === "予約変更"){
+        if (!isNaN(new Date(value).getTime())) {
+          return;
+        }
         const res = await fetch('/api/reservation/findReservation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
@@ -236,9 +219,7 @@ export const useChatHandler = () => {
         chatMessages.changeReservation.options = data.dataValues[0];        
         return addMessage(chatMessages.changeReservation);
       }
-      
     }  
-    
   }
   const handleBackClick = async () =>{
     removeMessage();

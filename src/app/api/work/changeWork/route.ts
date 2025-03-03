@@ -3,18 +3,16 @@ import { fetchWithAuth } from '@/utils/fetchUtils';
 
 export async function POST(req: Request) {
   try {
-    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
+    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api';
     const requestBody = await req.json();
-   
-    
-    const response = await fetchWithAuth(`${API_BASE_URL}/api/work/changeWork`, {
+    const res = await fetchWithAuth(`${API_BASE_URL}/work/changeWork`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify(requestBody),
     });
 
     // Get the raw response body to inspect it
-    const responseText = await response.text();
+    const responseText = await res.text();
     const data = responseText ? JSON.parse(responseText) : {};      
     return NextResponse.json(data, { status: 201 });
   } catch (error) {

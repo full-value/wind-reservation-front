@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import { fetchWithAuth } from '@/utils/fetchUtils';
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api';
-const BASE_URL = `${API_BASE_URL}/api/flat/changeFlat`
+
 export async function POST(req: Request) {
   try {
-       
+    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api';
     const requestBody = await req.json();
-    const res = await fetchWithAuth(BASE_URL, {
+    const res = await fetchWithAuth(`${API_BASE_URL}/flat/changeFlat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify(requestBody),

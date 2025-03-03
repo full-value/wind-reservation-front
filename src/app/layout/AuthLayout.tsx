@@ -2,7 +2,6 @@
 
 import { ReactNode } from 'react';
 import LeftImageContainer from '@/app/auth/components/LeftImageContainer';
-import LocaleSwitcher from '@shared/components/UI/LanguageSwitchButton';
 type AuthLayoutProps = {
   children: ReactNode;
 };
@@ -16,7 +15,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       <div className="fixed inset-0 bg-[url('/assets/images/Mask_pattern.png')] bg-cover bg-no-repeat opacity-[10%] pointer-events-none z-[-1]"></div>
       
       {/* Left Side - Image */}
-      <div className="sticky top-0 flex-1 flex justify-center items-center hidden md:block md:h-[100vh] w-[10px]">
+      <div className="sticky top-0 flex-1 justify-center items-center hidden md:block md:h-[100vh] w-[10px]">
         <LeftImageContainer />
       </div>
 

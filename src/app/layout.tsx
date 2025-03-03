@@ -1,6 +1,12 @@
 import { NextIntlClientProvider } from 'next-intl';
+import { isLocale } from '@/i18n/utils';
+import { Locale } from '@/i18n/locales';
+
+import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+
 import { ToastContainer } from 'react-toastify';
+
 import ClientQueryClientProvider from '@shared/components/ClientQueryClientProvider';
 import TokenRefresh from '@shared/components/TokenRefresh';
 import './globals.css';
@@ -28,7 +34,6 @@ const onestFont = localFont({
 });
 
 
-
 export default async function LocaleLayout({
   children,
 }: {
@@ -37,9 +42,9 @@ export default async function LocaleLayout({
   return (
     <html>
       <head>
-        <title>Full Value</title>
+        <title>wing</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/assets/images/site_icon.png" type="image/png" />
+        <link rel="icon" href="/assets/images/auth/logo.png" type="image/png" />
       </head>
       <body className={`${onestFont.variable}`}>
         <NextIntlClientProvider>

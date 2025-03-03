@@ -25,6 +25,7 @@ export async function POST(req: Request) {
 
       // Handle other errors
       const errorData = responseText ? JSON.parse(responseText) : { message: 'Error during registration' };
+      console.log("register data error----------------",errorData);
       return NextResponse.json(errorData, { status: response.status });
     }
 

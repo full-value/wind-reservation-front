@@ -5,8 +5,14 @@ import { isLocale } from './utils';
 import type { Locale } from './locales';
 
 // Static imports for translation messages
+import enMessages from '@/messages/en.json';
+import frMessages from '@/messages/fr.json';
 
-
+const messagesMap: Record<Locale, Record<string, any>> = {
+  en: enMessages,
+  fr: frMessages,
+  // Add other locales here as needed
+};
 
 export default getRequestConfig(async ({ requestLocale }) => {
   let locale: Locale;

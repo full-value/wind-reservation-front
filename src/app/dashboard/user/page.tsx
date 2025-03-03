@@ -1,28 +1,42 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/app/layout/DashboardLayout';
 import { FaSearch, FaSort } from "react-icons/fa";
-import MessageIcon from '@public/assets/icons/message_icon.svg';
-import BellIcon from '@public/assets/icons/notification-01.svg';
-import ProfileDropDown from '@shared/components/UI/ProfileDropdown';
 import CustomButton from '@shared/components/UI/CustomButton';
 import { useDashboard } from '@/hooks/useDashboard';
 import Modal from '@shared/components/UI/Modal';
 import { notify } from '@/utils/notification';
-import { Modern_Antiqua } from 'next/font/google';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { Timezone } from 'next-intl';
-import { log, timeStamp } from 'console';
+interface User {
+  id?:number;
+  name:string;
+  email:string;
+  // password:string;
+  phoneNum:string;
+  address:string;
+  role:string;
+  permissionStatus:string
+}
 
 
-type Props = {}
 
-const DashboardPage = (props: Props) => {
+
+const DashboardPage = () => {
   const { getUserData,changeUser,createUser, deleteUser} = useDashboard();
-  const [users, setUsers] = useState<{ id: number, name: string, email:string, phoneNum:number,permissionStatus:string, address:String,role:string[]}[]>([]);
+  const [users, setUsers] = useState<{ 
+          id: number;
+          name: string;
+          email: string;
+          phoneNum: string;
+          permissionStatus: string;
+          address: string;  // Use 'string' instead of 'String'
+          role: string; 
+          // password?:string;
+        }[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
-  const [modalContent, setModalContent] = useState<{ type: string, users?: any } | null>(null); // Optional: Store modal content
+  const [modalContent, setModalContent] = useState<{ type: string, users?: User | null } | null>(null); 
   
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -32,17 +46,11 @@ const DashboardPage = (props: Props) => {
   const [role, setRole] = useState('user');
   const [permission, setPermission] = useState('');
 
-
-
-
   const [searchTerm, setSearchTerm] = useState("");
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
-
-
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
@@ -62,7 +70,7 @@ const DashboardPage = (props: Props) => {
 
   
 
-  const handleSearch = (e: any) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
@@ -94,14 +102,14 @@ const DashboardPage = (props: Props) => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = sortedUsers.slice(indexOfFirstItem, indexOfLastItem);
 
-  const openModal = (users: any, type: string) => {
+  const openModal = (users: User | null,type: string) => {
     setModalContent({ type, users });
     
     if(users !== null){
       
       setUserName(users.name);
       setUserEmail(users.email);
-      setPassword(users.passwrod);
+      // setPassword(users.password);
       setPhoneNum(users.phoneNum);
       setAddress(users.address);
       setRole(users.role);
@@ -125,14 +133,15 @@ const DashboardPage = (props: Props) => {
   
   const handleSave = async () => {
     const updatedUserData = { 
-        id: modalContent?.users.id,
-        name: userName, 
-        email: userEmail, 
-        phoneNum: phoneNum, 
-        address: address, 
-        permissionStatus:permission,
-        role: role}
-        console.log(updatedUserData);
+      id: modalContent?.users?.id ? Number(modalContent.users.id) : 0, // Fallback to 0 if id is undefined
+      name: userName, 
+      email: userEmail, 
+      phoneNum: phoneNum, 
+      address: address, 
+      permissionStatus: permission,
+      role: role
+    };
+    console.log(updatedUserData);
         
     try {
       await changeUser(updatedUserData);
@@ -141,8 +150,8 @@ const DashboardPage = (props: Props) => {
           user.id === updatedUserData.id
             ? {
                 ...updatedUserData,
-                phoneNum: Number(updatedUserData.phoneNum), // Ensure phoneNum is a number
-                role: Array.isArray(updatedUserData.role) ? updatedUserData.role : [updatedUserData.role] ,
+                phoneNum: updatedUserData.phoneNum, // Ensure phoneNum is a number
+                role: Array.isArray(updatedUserData.role) ? updatedUserData.role : updatedUserData.role ,
               }
             : user
         )
@@ -150,6 +159,7 @@ const DashboardPage = (props: Props) => {
       notify('success', '成功!', 'データが成果的に変更されました!');
     } catch (error) {      
       notify('error', 'エラー!', '資料保管中にエラーが発生しました!');
+      console.log(error);
     }
     handleCloseModal();  
   };
@@ -175,6 +185,7 @@ const DashboardPage = (props: Props) => {
         notify('error', 'エラー!', '作成されたデータは無効です!');
       }
     } catch (error) {
+      console.log(error);
       notify('error', 'エラー!', '資料保管中にエラーが発生しました!');
     }
     handleCloseModal();  
@@ -182,15 +193,16 @@ const DashboardPage = (props: Props) => {
   
   
   const handleDelte = async () =>{
-    const id = modalContent?.users.id; 
+    const id = modalContent?.users?.id; 
     
     try {
-      const deletedUser = await deleteUser(id);
+      const deletedUser = await deleteUser(Number(id));
       setUsers(prevUsers => {
         return prevUsers.filter(users => users.id !== deletedUser.User.id);
       });
       notify('success', '成功!', 'データが成果的に削除されました!');
     } catch (error) {      
+      console.log(error);
       notify('error', 'エラー!', '資料削除中にエラーが発生しました!');
     }
     handleCloseModal(); 
@@ -245,19 +257,19 @@ const DashboardPage = (props: Props) => {
                 </tr>
               </thead>
               <tbody>
-                {currentUsers.map((users, index) => (
-                  <tr key={users.id} className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700`}>
+                {currentUsers.map((user, index) => (
+                  <tr key={user.id} className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700`}>
                     <td className="pl-4 py-3 whitespace-nowrap">{(currentPage-1)*itemsPerPage+index+1}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{users.id}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{users.name}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{users.email}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{users.phoneNum}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{users.address}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{users.permissionStatus==="inpermission"?"不許可":"許可"}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{ users.role.includes("user") ?"ユーザー" : "マネージャー"}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{user.id}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{user.name}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{user.email}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{user.phoneNum}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{user.address}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{user.permissionStatus==="inpermission"?"不許可":"許可"}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{ user.role.includes("user") ?"ユーザー" : "マネージャー"}</td>
                     <td className="pl-4 py-3 whitespace-nowrap flex gap-3">
-                      <button onClick={() => openModal(users, 'edit')} className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">編集</button>
-                      <button onClick={() => openModal(users, 'delete')} className="bg-red-500 hover:bg-red-700 px-4 py-2 rounded">削除</button>
+                      <button onClick={() => openModal(user, 'edit')} className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">編集</button>
+                      <button onClick={() => openModal(user, 'delete')} className="bg-red-500 hover:bg-red-700 px-4 py-2 rounded">削除</button>
                     </td>
                   </tr>
                 ))}
@@ -279,7 +291,7 @@ const DashboardPage = (props: Props) => {
         {/* Modal */}
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
           {modalContent?.type === 'edit' && (
-            <div className="flex inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="flex inset-0 items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
                 <h2 className="text-xl font-bold mb-4">情報編集</h2>
                 <div className="space-y-4">
@@ -358,7 +370,7 @@ const DashboardPage = (props: Props) => {
            </div>
           )}
           {modalContent?.type === 'create' && (
-            <div className="flex inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="flex inset-0 items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
                   <h2 className="text-xl font-bold mb-4">新規ユーザー</h2>
                   <div className="space-y-4">
@@ -443,7 +455,7 @@ const DashboardPage = (props: Props) => {
             </div>
           )}
           {modalContent?.type === 'delete' && (
-            <div className="flex inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="flex inset-0 items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
                 <h2 className="text-xl font-bold mb-4">資料を削除しますか?</h2>
                 <p className="mb-6">この操作は取り消せません。削除を確認してください。</p>

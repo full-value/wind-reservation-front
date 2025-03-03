@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-
     const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
 
     const body = await req.json();
@@ -27,12 +26,14 @@ export async function POST(req: Request) {
 
     const data = await res.json();
     return NextResponse.json(data);
-  } catch (error: any) {
-    if (error.name === 'AbortError') {
-      console.error('Request timed out');
-      return NextResponse.json({ error: 'Request timed out' }, { status: 408 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // Now, you can safely access the properties of `error` such as `message`
+      console.error('Fetch failed:', error.message);
+      return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
     }
-    console.error('Fetch failed:', error);
+    // If the error is not an instance of Error, handle accordingly
+    console.error('Unknown error:', error);
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }

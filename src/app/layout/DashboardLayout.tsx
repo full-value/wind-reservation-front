@@ -1,7 +1,6 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import Link from "next/link";
 import Sidebar from "@/app/layout/Sidebar";
-import MessageIcon from "@public/assets/icons/message_icon.svg";
 import BellIcon from "@public/assets/icons/notification-01.svg";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useNotificationData } from '@/state/notificationNum';
@@ -14,7 +13,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getNotificationNum();
+         await getNotificationNum();
       } catch (error) {
         console.error("Error fetching data", error);
       }

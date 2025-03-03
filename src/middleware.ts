@@ -9,9 +9,9 @@ export async function middleware(req: NextRequest) {
   if (url === '/') {
     return NextResponse.redirect(new URL('/chat', req.url));
   }
-
+  const accessToken = req.cookies.get('accessToken')?.value || null;
   if (url.startsWith('/dashboard')) {
-    if (userRole !== "manager") {
+    if (!accessToken) {
       return NextResponse.redirect(new URL('/chat', req.url));
     }
     return NextResponse.next();
@@ -26,12 +26,6 @@ export async function middleware(req: NextRequest) {
     url.startsWith('/api/')    // Exclude all API requests
   ) {
     return NextResponse.next();
-  }
-
-  // Check for authentication token
-  const accessToken = req.cookies.get('accessToken')?.value || null;
-  if (!accessToken) {
-    return NextResponse.redirect(new URL('/auth/login', req.url));
   }
 
   return NextResponse.next();

@@ -1,26 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/app/layout/DashboardLayout';
 import { useDashboard } from '@/hooks/useDashboard';
-import Modal from '@shared/components/UI/Modal';
-import { notify } from '@/utils/notification';
-import { Modern_Antiqua } from 'next/font/google';
-import DashboardIcon from '@public/assets/icons/dashboard.svg';
-import UserIcon from '@public/assets/images/icon/user_icon.svg';
 import ReservationIcon from '@public/assets/images/icon/reservation_icon.svg';
 import AgendarIcon from '@public/assets/images/icon/agendar_icon.svg';
 import BuildingIcon from '@public/assets/images/icon/building_icon.svg';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-type Props = {}
-
-const DashboardPage = (props: Props) => {
+const DashboardPage = () => {
   const [chartData, setChartData] = useState<{ month: string; count: number }[]>([]);
   const [todayReservationDatas, setTodayReservationDatas] = useState<{ id:number,flat_name:string,room_num:number,user_name:string,work_name:string,division:string}[]>([]);
 
   const [totalFlatNum, setTotalFlatNum] = useState(0);
   const [totalWorkNum, setTotalWorkNum] = useState(0);
-  const [totalUserNum, setTotalUserNum] = useState(0);
+  // const [totalUserNum, setTotalUserNum] = useState(0);
   const [totalRservationNum, setTotalRservationNum] = useState(0);
 
   const {getDashboardData} = useDashboard();
@@ -30,10 +24,10 @@ const DashboardPage = (props: Props) => {
         const data = await getDashboardData();
         setTotalFlatNum(data.totalFlatItems);
         setTotalWorkNum(data.totalWorkItems);
-        setTotalUserNum(data.totalUserItems);
+        // setTotalUserNum(data.totalUserItems);
         setTotalRservationNum(data.totalReservationItems);
         setChartData(data.monthlyReservations);
-        setTodayReservationDatas(data.reservationsWithUserName);
+        setTodayReservationDatas(data.todayReservations);
         
       } catch (error) {
         console.error("Error fetching data", error);
@@ -62,13 +56,13 @@ const DashboardPage = (props: Props) => {
                 <p className="font-bold text-[#8e95a3] text-[20px] mt-[-10px]">物件数</p>
               </div>
             </div>
-            <div className="flex w-[300px] gap-5 bg-[#242a38] justify-center px-4 py-5 rounded-[10px] ">
+            {/* <div className="flex w-[300px] gap-5 bg-[#242a38] justify-center px-4 py-5 rounded-[10px] ">
               <UserIcon className="w-[60px] h-[60px] text-[#afb6c4]" />
               <div className="flex flex-col mt-[-10px]">
                 <p className="font-semibold text-[#f9fbfc] text-[50px]">{totalUserNum}</p>
                 <p className="font-bold text-[#8e95a3] text-[20px] mt-[-10px]">ユーザー数</p>
               </div>
-            </div>
+            </div> */}
             <div className="flex w-[300px] gap-5 bg-[#242a38] justify-center px-4 py-5 rounded-[10px] ">
               <ReservationIcon className="w-[60px] h-[60px] text-[#afb6c4]" />
               <div className="flex flex-col mt-[-10px]">
@@ -86,7 +80,7 @@ const DashboardPage = (props: Props) => {
             </BarChart>
           </ResponsiveContainer>
           <div className="flex flex-col bg-[#242a38] px-[30px] py-[30px] rounded-[10px] mt-[20px]">
-            <p className="font-bold text-[25px] text-[#f9fbfc]">本日予約されたご予約</p>
+            <p className="font-bold text-[25px] text-[#f9fbfc]">本日のご予約</p>
             <table className="w-full  rounded-lg overflow-hidden mt-5  border-separate border-spacing-y-1">
               <thead>
                 <tr>
@@ -107,7 +101,6 @@ const DashboardPage = (props: Props) => {
               {todayReservationDatas && (todayReservationDatas.map((reservation, index) => (
                 <tr key={index} className="bg-[#2f3847] hover:bg-gray-700 text-[#a3aab5]">
                   <td className="px-6 py-1 whitespace-nowrap rounded-l-[5px]">{reservation.id}</td>
-                  <td className="px-6 py-1 whitespace-nowrap">{reservation.user_name}</td>
                   <td className="px-6 py-1 whitespace-nowrap">{reservation.flat_name}</td>
                   <td className="px-6 py-1 whitespace-normal">{reservation.room_num}</td>
                   <td className="px-6 py-1 whitespace-nowrap">{reservation.work_name}</td>

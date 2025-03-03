@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect,useRef  } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useState, useEffect,useRef, cache  } from 'react';
 import DashboardLayout from '@/app/layout/DashboardLayout';
 import { useDashboard } from '@/hooks/useDashboard';
 import { Modal } from "@mui/material";
@@ -8,48 +9,80 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import jaLocale from "@fullcalendar/core/locales/ja";
 import CustomButton from '@shared/components/UI/CustomButton';
 import { notify } from '@/utils/notification';
+import { EventClickArg } from '@fullcalendar/core';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+
+interface Event {
+  id:string;
+  user_name:string;
+  flat_name:string;
+  room_num:string;
+  work_name:string;
+  reservation_time:string;
+  division:string
+}
+const currencies = [
+  {
+    value: '午前',
+    label: '午前',
+  },
+  {
+    value: '午後',
+    label: '午後',
+  },
+  {
+    value: 'どちらても',
+    label: 'どちらても',
+  },
+];
 
 const Calendar = () => {
   const {getReservationListData,updateReservation,deleteReservation,createReservation} = useDashboard();
-  const [selectedEvent, setSelectedEvent] = useState<{id:number,user_name:string,flat_name:string,room_num:string,work_name:string,reservation_time:string,division:string} | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<{id:string,user_name:string,flat_name:string,room_num:string,work_name:string,reservation_time:string,division:string} | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const calendarRef = useRef(null); 
-  const [originalData,setOriginalData] = useState<{id:number,user_name:string,flat_name:string,room_num:string,work_name:string,reservation_time:string,division:string} | null>(null);
-  const [changedData,setChangedData] = useState();
+  const [originalData,setOriginalData] = useState<{id:string,user_name:string,flat_name:string,room_num:string,work_name:string,reservation_time:string,division:string}[]>([]);
+  const [changedData,setChangedData] = useState<{ id: string, title: string, date: string }[] |[]>([]);
  
-  const handleEventClick = (clickInfo: any) => {
-    if (originalData && Array.isArray(originalData)) { // Check if originalData is not null and is an array
+  const handleEventClick = (clickInfo:EventClickArg) => {
+    if (originalData && Array.isArray(originalData)) { 
       const selectedEvent = originalData.find(
-        (event: any) => Number(event.id) === Number(clickInfo.event._def.publicId)
+        (event: Event) => String(event.id) === String(clickInfo.event._def.publicId)
       );
-  
       if (selectedEvent) {
         setSelectedEvent(selectedEvent);
       }
     } else {
       console.error('originalData is not available');
-    }   
+    }
     setModalOpen(true);
   };  
   const handleSave = async () => {
-    if (selectedEvent?.id) {
+    
+    if (selectedEvent?.id !== "0") {
       // Update existing reservation
       if (selectedEvent && originalData) {
-        await updateReservation(selectedEvent);
-  
-        // Update the list of reservations
-        const updatedEvents = originalData.map((event: any) =>
-          event.id === selectedEvent.id ? selectedEvent : event
-        );
-  
-        setOriginalData(updatedEvents);
-        setChangedData(
-          updatedEvents.map((reservation: any) => ({
-            id: reservation.id,
-            title: `予約番号${reservation.id}-${reservation.work_name}`,
-            date: new Date(reservation.reservation_time).toISOString().split("T")[0],
-          }))
-        );
+        try{
+          await updateReservation(selectedEvent);  
+          // Update the list of reservations
+          const updatedEvents = originalData.map((event: Event) =>
+            event.id === selectedEvent.id ? selectedEvent : event
+          );
+    
+          setOriginalData(updatedEvents);
+          setChangedData(
+            updatedEvents.map((reservation: Event) => ({
+              id: String(reservation.id),
+              title: `予約番号${reservation.id}-${reservation.work_name}`,
+              date: new Date(reservation.reservation_time).toISOString().split("T")[0],
+            }))
+          );
+          notify('success', '成功!', '予約が成果的に行われました!');
+        }catch{
+          notify('error', '失敗!', '予約追加に失敗しました!');
+        }
+        
   
         setModalOpen(false);
       } else {
@@ -58,8 +91,7 @@ const Calendar = () => {
     } else {
       // Create new reservation
       try {
-        const newReservation = await createReservation(selectedEvent);
-        console.log("ddddddddd",newReservation);
+        const newReservation = await createReservation(selectedEvent);    
         
         if (newReservation) {
           // Add new reservation to state
@@ -67,7 +99,7 @@ const Calendar = () => {
           setOriginalData(updatedOriginalData);
   
           setChangedData([
-            ...changedData,
+            ...(changedData ?? []), // If changedData is undefined, fallback to an empty array
             {
               id: newReservation.id,
               title: `予約番号${newReservation.id}-${newReservation.work_name}`,
@@ -90,45 +122,37 @@ const Calendar = () => {
     const data = await getReservationListData(startDate, endDate);
     changeData(data);
   };
-  const changeData = (data: any) => {
-    // Check if data is an array
-    console.log(data);
-    
-    if (data.status) {
-      console.log('Expected data to be an array, but got:');
+  const changeData = (data: Event[]) => {
+    if (!Array.isArray(data)) { // Check if data is an array
+      console.log('Expected data to be an array, but got:', data);
     } else {
       setOriginalData(data);
-      console.log(data);
-  
-      const dataValues = data.map((reservation: any) => {
-        const formattedDate = new Date(reservation.reservation_time).toISOString().split('T')[0]; // Format the date
+          
+      const dataValues = data.map((reservation: Event) => {
+        const formattedDate = new Date(reservation.reservation_time).toISOString().split('T')[0];
         const title = `予約番号${reservation.id}-${reservation.work_name}`;
         return {
           id: reservation.id,
           title: title,
-          date: formattedDate,
+          date: formattedDate, // Changed `start` to `date`
         };
       });
-      setChangedData(dataValues);
       
+      setChangedData(dataValues);
     }
   };
   
   const handleDelete = () => {
     if (selectedEvent?.id) {
       try {
-        // Call the deleteReservation function (assumed to be an async operation)
-        deleteReservation(selectedEvent.id);
-  
-        // Update the changedData to remove the deleted event
+       
+        deleteReservation(Number(selectedEvent?.id));
         setChangedData((prevChangedData) => {
-          return prevChangedData.filter(data => data.id !== selectedEvent.id);
+          return (prevChangedData ?? []).filter(data => data.id !== selectedEvent.id);
         });
-  
-        // Show success notification
+
         notify('success', '成功!', '予約が成果的に削除されました!');
-  
-        // Close the modal
+        
         setModalOpen(false);
       } catch (error) {
         console.error('Error during delete operation:', error);
@@ -169,16 +193,16 @@ const Calendar = () => {
               label="+追加"
               onClick={() => {
                 setSelectedEvent({
-                  id: 0,
+                  id: "0",
                   user_name: "",
                   flat_name: "",
                   room_num: "",
                   work_name: "",
                   reservation_time: "",
-                  division: "午前", // Set a default value for the select dropdown
+                  division: "午前",
                 });
                 setModalOpen(true);
-              }} // Open modal for creating a new entry
+              }} 
             />
           </div>
           <div className="bg-white p-5 shadow-lg rounded-lg">
@@ -187,16 +211,17 @@ const Calendar = () => {
               plugins={[dayGridPlugin]}
               initialView="dayGridMonth"
               locale={jaLocale}
-              events={changedData}
+              events={changedData} 
               datesSet={handleDatesSet}
               eventContent={(arg) => (
                 <div className="truncate-event" title={arg.event.title}>
                   {arg.event.title}
                 </div>
               )}
-              eventClick={(event) => handleEventClick(event)} // Event click handler
+              eventClick={(event) => handleEventClick(event)}
               height="600px"
             />
+
             <Modal
               open={modalOpen}
               onClose={() => setModalOpen(false)}
@@ -206,74 +231,68 @@ const Calendar = () => {
             >
               <div className="modal-content p-4 bg-white w-[40%] rounded-lg">
                 {selectedEvent && (
-                  <div className="flex inset-0 flex items-center justify-center  bg-opacity-50">
+                  <div className="flex inset-0 items-center justify-center  bg-opacity-50">
                   <div className="bg-white p-6 rounded-[10px] w-full">
                       <h2 className="text-xl font-bold mb-4">予約編集</h2>
-                      <div className="space-y-4">
-                        <input
-                            type="text"
-                            placeholder="物件名"
-                            value={selectedEvent.flat_name}
-                            onChange={(e) => setSelectedEvent({
+                      <div className="space-y-4">                        
+                        <TextField 
+                          label="物件名" 
+                          value={selectedEvent.flat_name}
+                          onChange={(e) => setSelectedEvent({
                               ...selectedEvent,
                               flat_name: e.target.value
-                            })}
-                            className="w-full p-2 border border-gray-300 rounded"
-                        />
-                        <input
-                            type="number"
-                            placeholder="部屋番号"
-                            value={selectedEvent.room_num}
+                            })} 
+                          variant="outlined" 
+                          className="w-full p-2 border border-gray-300 rounded"
+                        />   
+                        <TextField 
+                          type="number"
+                          label="部屋番号" 
+                          value={selectedEvent.room_num}
                             onChange={(e) => setSelectedEvent({
                               ...selectedEvent,
                               room_num: e.target.value
                             })}
-                            className="w-full p-2 border border-gray-300 rounded"
-                        />
-                        <input
-                            type="text"
-                            placeholder="案件名"
-                            value={selectedEvent.work_name}
-                            onChange={(e) => setSelectedEvent({
+                          variant="outlined" 
+                          className="w-full p-2 border border-gray-300 rounded"
+                        />                        
+                        <TextField 
+                          label="案件名" 
+                          value={selectedEvent.work_name}
+                          onChange={(e) => setSelectedEvent({
                               ...selectedEvent,
                               work_name: e.target.value
-                            })}
-                            className="w-full p-2 border border-gray-300 rounded"
-                        />
-                        <input
-                          type="number"
-                          placeholder="ユーザID"
-                          value={selectedEvent.user_name}
-                          onChange={(e) => setSelectedEvent({
-                            ...selectedEvent,
-                            user_name: e.target.value
-                          })}
+                            })} 
+                          variant="outlined" 
                           className="w-full p-2 border border-gray-300 rounded"
                         />
-                        <select
-                          id="slelectdivision"
-                          value={selectedEvent.division} // Ensure a string value
+                        <TextField
+                          select
+                          label="区分"
+                          value={selectedEvent.division}  // Use `value` instead of `defaultValue`
                           onChange={(e) => setSelectedEvent({
                             ...selectedEvent,
                             division: e.target.value
                           })}
-                          required
-                          className="w-full py-2 px-2 pr-10 rounded-[6px] border mt-1 "
+                          className="w-full p-2 border border-gray-300 rounded"
                         >
-                          <option value="午前">午前</option>
-                          <option value="午後">午後</option>
-                          <option value="どちらでも">どちらでも</option>
-                        </select>
-                        <input
+                          {currencies.map((option, index) => (
+                            <MenuItem key={`${option.value}-${index}`} value={option.value}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                        <TextField 
                           type="date"
-                          placeholder="開始時間"
-                          value={selectedEvent.reservation_time}
+                          
+                          value={selectedEvent.reservation_time || "01/01/2001"}
                           onChange={(e) => setSelectedEvent({
                             ...selectedEvent,
                             reservation_time: e.target.value
                           })}
+                          variant="outlined" 
                           className="w-full p-2 border border-gray-300 rounded"
-                        />
+                        />                           
                       </div>
                       <div className="flex justify-end mt-4 space-x-2">
                           <button

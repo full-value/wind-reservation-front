@@ -1,45 +1,40 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/app/layout/DashboardLayout';
 import { FaSearch, FaSort } from "react-icons/fa";
-import MessageIcon from '@public/assets/icons/message_icon.svg';
-import BellIcon from '@public/assets/icons/notification-01.svg';
-import ProfileDropDown from '@shared/components/UI/ProfileDropdown';
 import CustomButton from '@shared/components/UI/CustomButton';
 import { useDashboard } from '@/hooks/useDashboard';
 import Modal from '@shared/components/UI/Modal';
 import { notify } from '@/utils/notification';
-import { Modern_Antiqua } from 'next/font/google';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Timezone } from 'next-intl';
-import { log, timeStamp } from 'console';
+interface Work {
+  id?: number;
+  work_name: string;
+  flat_name:string;
+  room_num:number;
+  start_time:Timezone;
+  end_time:Timezone
+}
 
-type Props = {}
-
-const DashboardPage = (props: Props) => {
+const DashboardPage = () => {
   const { getWorkData,changeWork,createWork, deleteWork} = useDashboard();
-  const [works, setWorks] = useState<{ id: number, work_name: string, flat_name:string, room_num:number, start_time:Timezone,end_time:Timezone}[]>([]);
+  const [works, setWorks] = useState<Work[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
-  const [modalContent, setModalContent] = useState<{ type: string, works?: any } | null>(null); // Optional: Store modal content
+  const [modalContent, setModalContent] = useState<{ type: string, works?: Work } | null>(null); // Optional: Store modal content
   const [workName, setWorkName] = useState('');
-  const timeStamp = new Date().toISOString();
   const [roomNum, setRoomNum] = useState(0);
   const [flatName, setFlatName] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-
-
-
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
-
-
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
@@ -58,12 +53,9 @@ const DashboardPage = (props: Props) => {
     fetchData();
   }, []);
 
-  
-
-  const handleSearch = (e: any) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
-
   const handleSort = (column: string) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -81,18 +73,23 @@ const DashboardPage = (props: Props) => {
 
   const sortedWorks = [...filteredWorks].sort((a, b) => {
     if (sortColumn) {
-      const column = sortColumn as keyof typeof a; // Ensure TypeScript knows it's a valid key
-      if (a[column] < b[column]) return sortDirection === "asc" ? -1 : 1;
-      if (a[column] > b[column]) return sortDirection === "asc" ? 1 : -1;
+      const column = sortColumn as keyof Work;
+  
+      // Check if both a[column] and b[column] are defined
+      if (a[column] !== undefined && b[column] !== undefined) {
+        if (a[column] < b[column]) return sortDirection === "asc" ? -1 : 1;
+        if (a[column] > b[column]) return sortDirection === "asc" ? 1 : -1;
+      }
     }
     return 0;
   });
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentWorks = sortedWorks.slice(indexOfFirstItem, indexOfLastItem);
 
-  const openModal = (works: any, type: string) => {
-    setModalContent({ type, works });
+  const openModal = (works: Work | null, type: string) => {
+    setModalContent({ type, works:works?? undefined });
     console.log("this is works:",works);
     
     if(works !== null){
@@ -114,34 +111,53 @@ const DashboardPage = (props: Props) => {
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Close modal
-    setModalContent(null); // Reset modal content
+    setIsModalOpen(false); 
+    setModalContent(null); 
   };
 
   
   
   const handleSave = async () => {
     const updatedWorkData = { 
-        id: modalContent?.works.id,
+        id: modalContent?.works?.id,
         work_name: workName, 
         flat_name: flatName, 
         room_num: roomNum, 
         start_time: startTime, 
-        end_time: endTime  }
-        console.log('this is startTime type:',typeof(updatedWorkData.start_time));
-    try {
-      await changeWork(updatedWorkData);
-      setWorks(prevworkss => {
-        return prevworkss.map(works => 
-          works.id === updatedWorkData.id ? updatedWorkData : works
-        );
-      });
-      notify('success', '成功!', 'データが成果的に変更されました!');
-    } catch (error) {      
-      notify('error', 'エラー!', '資料保管中にエラーが発生しました!');
+        end_time: endTime  
+    };
+    
+    console.log('this is startTime type:', typeof(updatedWorkData.start_time));
+    
+    // Validate updatedWorkData.id
+    if (!updatedWorkData.id) {
+      console.log("ID is invalid", updatedWorkData.id);
+      return; // Prevent further actions
     }
+
+    try {
+        // Make the API call to update the work data
+        await changeWork(updatedWorkData);
+
+        // Update the state with the modified work data
+        setWorks(prevworks => {
+            return prevworks.map(works => 
+                works.id === updatedWorkData.id ? updatedWorkData : works
+            );
+        });
+
+        // Notify the user of the success
+        notify('success', '成功!', 'データが成果的に変更されました!');
+    } catch (error) {
+        // Handle errors in case the update fails
+        notify('error', 'エラー!', '資料保管中にエラーが発生しました!');
+        console.log(error);
+    }
+
+    // Close the modal
     handleCloseModal();
-  };
+};
+
   const handleCreate = async () => {
     const saveWorkData = { 
       work_name: workName, 
@@ -166,22 +182,25 @@ const DashboardPage = (props: Props) => {
       }
     } catch (error) {
       notify('error', 'エラー!', '資料保管中にエラーが発生しました!');
+      console.log(error);
     }
     handleCloseModal();
   };
   
   
   const handleDelte = async () =>{
-    const id = modalContent?.works.id; 
+    const id = modalContent?.works?.id; 
     
     try {
-      const deletedWork = await deleteWork(id);
+      const deletedWork = await deleteWork(Number(id));
+      console.log("ddddd",deletedWork)
       setWorks(prevworkss => {
         return prevworkss.filter(works => works.id !== deletedWork.Work.id);
       });
       notify('success', '成功!', 'データが成果的に削除されました!');
     } catch (error) {      
       notify('error', 'エラー!', '資料削除中にエラーが発生しました!');
+      console.log(error);
     }
     handleCloseModal();
   }
@@ -267,7 +286,7 @@ const DashboardPage = (props: Props) => {
         {/* Modal */}
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
           {modalContent?.type === 'edit' && (
-            <div className="flex inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="flex inset-0 items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
                 <h2 className="text-xl font-bold mb-4">情報編集</h2>
                 <div className="space-y-4">
@@ -329,7 +348,7 @@ const DashboardPage = (props: Props) => {
            </div>
           )}
           {modalContent?.type === 'create' && (
-            <div className="flex inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="flex inset-0 items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
                   <h2 className="text-xl font-bold mb-4">新規案件</h2>
                   <div className="space-y-4">
@@ -387,7 +406,7 @@ const DashboardPage = (props: Props) => {
             </div>
           )}
           {modalContent?.type === 'delete' && (
-            <div className="flex inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="flex inset-0 items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
                 <h2 className="text-xl font-bold mb-4">資料を削除しますか?</h2>
                 <p className="mb-6">この操作は取り消せません。削除を確認してください。</p>

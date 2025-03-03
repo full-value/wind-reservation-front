@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { fetchWithAuth } from '@/utils/fetchUtils';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api';
-const BASE_URL = `${API_BASE_URL}/api/reservation/deleteReservation`;
+const BASE_URL = `${API_BASE_URL}/reservation/deleteReservation`;
 export async function POST(req: Request) {
   try {  
    

@@ -1,25 +1,27 @@
 'use client';
-import React from 'react';
-import { useState } from 'react';
+
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRegister } from '@/hooks/useAuth';
 import { useRegisterStore } from '@/state/registerStore';
 import { validateEmail, validatePassword } from '@/utils/validation';
-import { toast} from 'react-toastify';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import AuthLayout from '@/app/layout/AuthLayout';
 import CustomInput from '@shared/components/UI/CustomInput';
 import Spinner from '@shared/components/UI/Spinner';
 import CustomButton from '@shared/components/UI/CustomButton';
-import ArrowRightIcon from '@public/assets/icons/arrow-right.svg';
-const Register = () => {
+
+const Register: React.FC = () => {
   const router = useRouter();
-  const { mutate, status } = useRegister();
+  const { mutate } = useRegister();
   const { formData, setField } = useRegisterStore();
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [errors, setErrors] = React.useState<Partial<typeof formData>>({});
-  const [passwordShow, setPasswordShow] = React.useState(false);
+  
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Partial<typeof formData>>({});
+  const [passwordShow, setPasswordShow] = useState<boolean>(false);
+
   const togglePasswordVisibility = () => {
     setPasswordShow(!passwordShow);
   };
@@ -32,14 +34,16 @@ const Register = () => {
     if (!formData.phoneNum) validationErrors.phoneNum = '電話番号は必須です';
     if (!validateEmail(formData.email)) validationErrors.email = '無効なメールアドレスです';
     if (validatePassword(formData.password)) validationErrors.password = 'パスワードは8文字以上でなければなりません';
-    if (formData.password !== formData.confirmPassword)
+    if (formData.password !== formData.confirmPassword) {
       validationErrors.confirmPassword = 'パスワードと確認パスワードが一致しません';
+    }
     if (!formData.address) validationErrors.address = '住所は必須です';
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
+
     const payload = {
       name: formData.name,
       phoneNum: formData.phoneNum,
@@ -47,29 +51,32 @@ const Register = () => {
       password: formData.password,
       address: formData.address,
     };
+
     setIsLoading(true);
     mutate(payload, {
-      onSuccess: (data) => {
+      onSuccess: () => {
         setIsLoading(false);
         router.push('/auth/login');
       },
-      onError: (error: any) => {
+      onError: () => {
         setIsLoading(false);
       },
     });
   };
+
   return (
     <AuthLayout>
       <div className="mt-[100px] w-[70%]">
-        <div className="flex justify-center">
-          <img src="/assets/images/logo.png" alt="logo" className="mb-2　w-20 h-20 mt-[30px]" />
+        <div className="flex justify-center items-center">
+          <Image src="/assets/images/auth/logo.png" alt="logo" width={70} height={70}  priority />
+          <p className="font-bold text-[70px] text-[#005596]"><span className="text-[#e6494f] text-[60px]">in</span>g</p>
         </div>
-      
         <div className="border-b border-gray-300 p-5 flex flex-col justify-center mb-5">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">会員登録</h2>
           <p className="text-gray-400 text-center">詳細を入力してください</p>
         </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2 ">
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
           <CustomInput
             value={formData.name}
             onChangeHandler={(value) => setField('name', value)}
@@ -89,10 +96,11 @@ const Register = () => {
               value={formData.email}
               onChangeHandler={(value) => setField('email', value)}
               error={errors.email}
-              placeholder="メールアドレス（例：aaa@gmail.com)"
+              placeholder="メールアドレス（例：aaa@gmail.com）"
               id="email"
             />
           </div>  
+
           <div className="md:flex md:gap-4">
             <CustomInput
               value={formData.password}
@@ -117,31 +125,30 @@ const Register = () => {
               iconVisible
             />
           </div>         
+
           <CustomInput
             value={formData.address}
             onChangeHandler={(value) => setField('address', value)}
             error={errors.address}
-            placeholder="距離アドレスを入力してください。"
+            placeholder="住所を入力してください。"
             id="address"
           />
+
           <div className="flex justify-between border-t border-gray-300 mt-2 py-3">
-            <Link href="/auth/login" className="flex justify-between mt-35 rounded-lg bg-white p-5 shadow-sm">
-              <div>
-                <h4 className="text-black-600 hover:text-blue-800">ログイン</h4>
-              </div>
-              
+            <Link href="/auth/login" className="rounded-lg bg-white p-5 shadow-sm">
+              <h4 className="text-black-600 hover:text-blue-800">ログイン</h4>
             </Link>
-            <CustomButton type="submit" label="Next" className="hover:opacity-80" />
+            <CustomButton type="submit" label="サインアップ" className="hover:opacity-80" />
           </div>
         </form>
       </div>      
+
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
           <Spinner />
         </div>
       )}
     </AuthLayout>
-    
   );
 };
 

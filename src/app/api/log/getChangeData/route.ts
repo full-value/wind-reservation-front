@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchWithAuth } from '@/utils/fetchUtils';
-export async function GET(req: Request) {
+export async function GET() {
   try {  
     const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';   
    
