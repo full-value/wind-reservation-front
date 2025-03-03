@@ -6,6 +6,7 @@ import { useDashboard } from '@/hooks/useDashboard';
 import { Modal } from "@mui/material";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
 import jaLocale from "@fullcalendar/core/locales/ja";
 import CustomButton from '@shared/components/UI/CustomButton';
 import { notify } from '@/utils/notification';
@@ -208,11 +209,16 @@ const Calendar = () => {
           <div className="bg-white p-5 shadow-lg rounded-lg">
             <FullCalendar
               ref={calendarRef}
-              plugins={[dayGridPlugin]}
+              plugins={[dayGridPlugin, timeGridPlugin]}
               initialView="dayGridMonth"
               locale={jaLocale}
               events={changedData} 
               datesSet={handleDatesSet}
+              headerToolbar={{
+                left: "prev,next today", // Default buttons
+                center: "title", // Calendar title
+                right: "dayGridMonth,timeGridWeek,timeGridDay", // Custom button
+              }}
               eventContent={(arg) => (
                 <div className="truncate-event" title={arg.event.title}>
                   {arg.event.title}

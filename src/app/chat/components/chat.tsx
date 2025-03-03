@@ -104,7 +104,7 @@ const Chat = () => {
                   type="text"  
                   onChange={handleInputChange}
                   onKeyDown={(e)=>{handleKeyDown(e,message.reqType)}} 
-                  className="top-[50px] text-[20px] bg-[#dfe1ee] px-5 py-2 w-[30vw] border-none rounded-[5px] px-[10px] py-[5px] border-[0px] focus:outline-none focus:border-none" 
+                  className="top-[50px] text-[20px] bg-[#dfe1ee] w-[30vw] border-none rounded-[5px] px-[10px] py-[5px] border-[0px] focus:outline-none focus:border-none" 
                   placeholder="ここに入力してください..."
                 />
               </div>

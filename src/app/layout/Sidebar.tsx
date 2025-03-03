@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useLogout } from '@/hooks/useAuth';
+import Image from "next/image";
 import { useAlbumStore } from '@/state/albumStore';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -47,20 +48,12 @@ const Sidebar = () => {
           <div className="flex items-center">
             
             {isSidebarOpen ? (
-              <div className='flex justify-start items-center'>
-                <img
-                  src="/assets/images/auth/logo2.png"
-                  alt="logo"
-                  className="h-[40px] transition-all duration-100"
-                />
-                <p className='text-white font-bold text-[30px]'>Full Value</p>
+              <div className="flex justify-center items-center">
+                <Image src="/assets/images/auth/dash_logo.png" alt="logo" width={60} height={60} priority />
+                <p className="font-bold text-[60px] text-[#FFFFFF]"><span className="text-[#e6494f] text-[60px]">in</span>g</p>
               </div>
             ):(
-              <img
-              src="/assets/images/auth/logo2.png"
-              alt="logo"
-              className={`h-[40px] transition-all duration-100 ${isSidebarOpen ? 'mr-[12px]' : 'mr-0'}`}
-            />
+              <Image src="/assets/images/auth/dash_logo.png" alt="logo" width={60} height={60} priority />
             )
             }
           </div>
