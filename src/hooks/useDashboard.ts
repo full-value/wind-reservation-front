@@ -46,7 +46,25 @@ export const useDashboard = () => {
   const getNotification = async () => fetchData('/api/log/getNotification');
 
   // Mark as Read
-  const markAsRead = async (id: number) => fetchData(`/api/log/getNotification/${id}`);
+  const markAsRead = async (id: number) => {
+    try {
+      const response = await fetch(`/api/alerts/${id}/read`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to mark alert as read');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error marking alert as read:', error);
+      throw error;
+    }
+  };
 
   // Get Dashboard Data
   const getDashboardData = async () => fetchData('/api/reservation/getDashboardData');
@@ -103,10 +121,68 @@ export const useDashboard = () => {
 
   const createReservation = async (body: any) => fetchData('/api/reservation/createReservation', { method: 'POST', body: JSON.stringify(body) });
 
+  // Alert Management
+  const createAlert = async (body: any) => fetchData('/api/alerts', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+
+  const updateAlert = async (id: string, body: any) => fetchData(`/api/alerts?id=${id}`, {
+    method: 'PUT', 
+    body: JSON.stringify(body),
+  });
+
+  const deleteAlert = async (id: string) => fetchData(`/api/alerts?id=${id}`, {
+    method: 'DELETE',
+  });
+
+  // Get Alerts
+  const getAlerts = async () => {
+    try {
+      const response = await fetch('/api/alerts', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch alerts');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching alerts:', error);
+      throw error;
+    }
+  };
+  // Get All Alerts (with read status)
+  const getAllAlerts = async () => {
+    try {
+      const response = await fetch('/api/alerts/all', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch all alerts');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching all alerts:', error);
+      throw error;
+    }
+  };
+
+
   return {
     getFlatData, changeFlat, createFlat, deleteFlat, getWorkData, createWork, changeWork, deleteWork,
     getUserData, changeUser, deleteUser, createUser, getErrorLogData, getChangeLogData, getApiLogData,
     getNotificationNum, getNotification, markAsRead, getReservationListData, updateReservation, deleteReservation,
     createReservation, getDashboardData, loading, error,
+    createAlert,updateAlert,deleteAlert,getAlerts,getAllAlerts
   };
 };

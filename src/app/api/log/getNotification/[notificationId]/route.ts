@@ -7,7 +7,7 @@ export async function GET(req: Request) {
     const id = url.pathname.split('/')[4];
     const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';      
 
-    const res = await fetchWithAuth(`${API_BASE_URL}/api/log/getNotification/${id}`, {
+    const res = await fetchWithAuth(`${API_BASE_URL}/log/getNotification/${id}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json'},
     });

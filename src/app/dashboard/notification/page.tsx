@@ -63,7 +63,7 @@ const Notification = () => {
 
   const handleCheck = async (id: number) => {
     try {
-      await markAsRead(id);
+      await markAsRead(id); 
       setField('Notification_Num', NotificationNum.Notification_Num - 1);
       setNotificationData((prev) =>
         prev.map((notification) =>

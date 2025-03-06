@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
 
-    const res = await fetch(`${API_BASE_URL}/api/auth/password-reset`, {
+    const res = await fetch(`${API_BASE_URL}/auth/password-reset`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

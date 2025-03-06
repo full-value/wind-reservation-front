@@ -1,40 +1,11 @@
 import { NextIntlClientProvider } from 'next-intl';
-import { isLocale } from '@/i18n/utils';
-import { Locale } from '@/i18n/locales';
-
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-
 import { ToastContainer } from 'react-toastify';
-
 import ClientQueryClientProvider from '@shared/components/ClientQueryClientProvider';
 import TokenRefresh from '@shared/components/TokenRefresh';
 import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
-// Local Font Example for Onest
-const onestFont = localFont({
-  src: [
-    {
-      path: '../../public/assets/fonts/Onest-Black.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../public/assets/fonts/Onest-Black.ttf',
-      weight: '600',
-      style: 'normal',
-    },
-    {
-      path: '../../public/assets/fonts/Onest-Black.ttf',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-onest',
-});
 
-
-export default async function LocaleLayout({
+export default function LocaleLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -42,11 +13,19 @@ export default async function LocaleLayout({
   return (
     <html>
       <head>
-        <title>wing</title>
+        <title>weing</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/assets/images/auth/logo.png" type="image/png" />
+        {/* Corrected crossorigin to crossOrigin */}
+        <link
+          rel="preload"
+          href="/assets/fonts/Onest-Bold.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
       </head>
-      <body className={`${onestFont.variable}`}>
+      <body>
         <NextIntlClientProvider>
           <ClientQueryClientProvider>
             <TokenRefresh />

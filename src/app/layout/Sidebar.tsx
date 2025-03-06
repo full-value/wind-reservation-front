@@ -19,6 +19,7 @@ import ErrorIcon from '@public/assets/images/icon/error_icon.svg';
 import FileIcon from '@public/assets/images/icon/file_icon.svg';
 import HistoryIcon from '@public/assets/images/icon/history_icon.svg';
 import ApiIcon from '@public/assets/images/icon/api_icon.svg';
+import AlertIcon from '@public/assets/icons/alert_icon.svg';
 
 
 const Sidebar = () => {
@@ -49,7 +50,7 @@ const Sidebar = () => {
             
             {isSidebarOpen ? (
               <div className="flex justify-center items-center">
-                <Image src="/assets/images/auth/dash_logo.png" alt="logo" width={60} height={60} priority />
+                <Image src="/assets/images/auth/dash_logo.png" alt="logo" width={60} height={60} style={{ width: "auto", height: "auto" }}  priority />
                 <p className="font-bold text-[60px] text-[#FFFFFF]"><span className="text-[#e6494f] text-[60px]">in</span>g</p>
               </div>
             ):(
@@ -159,6 +160,16 @@ const Sidebar = () => {
             <Link href="/dashboard/file" className="flex items-center">
               <FileIcon className={`w-[18px] h-[18px] ${pathname.startsWith('/dashboard/file') && "text-[#FFFFFF]"}`} />
               {(isSidebarOpen || isMobile) && <span className={`ml-2 ${pathname.startsWith('/dashboard/file') && "text-[#FFFFFF]"}`}>ファイル</span>}
+            </Link>
+          </li>
+          <li
+            className={`${
+              pathname.startsWith('/dashboard/alert') ? 'bg-[#ff8892] text-white' : ''
+            } rounded-lg p-3 hover:bg-[#ff8892] text-white transition-all duration-100`}
+          >
+            <Link href="/dashboard/alert" className="flex items-center">
+              <AlertIcon className={`w-[18px] h-[18px] ${pathname.startsWith('/dashboard/alert') && "text-[#FFFFFF]"}`} />
+              {(isSidebarOpen || isMobile) && <span className={`ml-2 ${pathname.startsWith('/dashboard/alert') && "text-[#FFFFFF]"}`}>警告</span>}
             </Link>
           </li>
            <li className="rounded-lg p-3 hover:bg-[#ff8892] text-white transition-all duration-100" onClick={handleLogout}>

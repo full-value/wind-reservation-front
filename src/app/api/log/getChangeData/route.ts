@@ -4,7 +4,7 @@ export async function GET() {
   try {  
     const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';   
    
-    const res = await fetchWithAuth(`${API_BASE_URL}/api/log/getChangeData`, {
+    const res = await fetchWithAuth(`${API_BASE_URL}/log/getChangeData`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json'},
     });

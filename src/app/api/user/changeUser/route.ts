@@ -6,7 +6,7 @@ export async function POST(req: Request) {
  
     const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
     const requestBody = await req.json();
-    const response = await fetchWithAuth(`${API_BASE_URL}/api/user/changeUser`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/user/changeUser`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify(requestBody),

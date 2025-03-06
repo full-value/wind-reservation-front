@@ -15,7 +15,7 @@ interface Employee {
   name: string;
   address: string
 }
-const DashboardPage = () => {
+const FlatPage = () => {
   const { getFlatData,changeFlat,createFlat, deleteFlat} = useDashboard();
   const [employees, setEmployees] = useState<{ id: number, name: string, address: string}[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
@@ -341,4 +341,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default FlatPage;

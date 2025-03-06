@@ -7,7 +7,7 @@ export async function POST() {
   const refreshToken = await getCookie('refreshToken');
 
   try {
-    const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/logout`, {
+    const res = await fetchWithAuth(`${API_BASE_URL}/auth/logout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken }),
