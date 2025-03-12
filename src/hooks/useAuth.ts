@@ -17,6 +17,8 @@ interface PasswordResetResponse {
 type LoginVariables = { email: string; password: string };
 type LoginResponse = { token:string;accessToken: string; refreshToken: string;role:string };
 
+type RoleVariables = { role: string; };
+type RoleResponse = { role:string;};
 
 const login = async (credentials: LoginVariables): Promise<LoginResponse> => {
   const res = await fetch('/api/auth/login', {
@@ -34,7 +36,21 @@ const login = async (credentials: LoginVariables): Promise<LoginResponse> => {
   }
   return await res.json();
 };
+const userRole = async (): Promise<RoleResponse> => {
+  const res = await fetch('/api/auth/userRole', {
+    method: 'GET',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },   
+  });
 
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message );
+  }
+  return await res.json();
+};
 
 // Register API function
 type RegisterVariables = { email: string; password: string };
@@ -110,13 +126,11 @@ const refreshTokenAPI = async (): Promise<RefreshTokenResponse> => {
 
 
 // Hook for login
-export const useLogin = () => {
-  const setAuthenticatedUser = useAuthStore((state) => state.setAuthenticatedUser);
+export const useLogin = () => {  
 
   return useMutation<LoginResponse, Error, LoginVariables>({
     mutationFn: login,
-    onSuccess: () => {
-      setAuthenticatedUser(true);
+    onSuccess: (data) => {     
       notify('success', 'ログインしました', 'ログインに成功しました!')
     },
     onError: (error) => {
@@ -155,18 +169,14 @@ export const passwordReset = () => {
 export const useLogout = () => {  
   const router = useRouter();
   const queryClient = useQueryClient();  
-  const setAuthenticatedUser = useAuthStore((state) => state.setAuthenticatedUser);
-  
   return useMutation<LogoutResponse, Error>({
     mutationFn: logout,
     onSuccess: () => {
-      setAuthenticatedUser(false);    
       queryClient.invalidateQueries();
       router.push('/chat');      
       notify('success', '成功', 'ログアウトに成功しました!');
     },
     onError: () => {
-      setAuthenticatedUser(false);
       router.push('/chat');
       notify('error', 'エラー', 'ログアウトに失敗しました!');
     },
@@ -176,22 +186,17 @@ export const useLogout = () => {
 // // Hook for refreshing the token
 export const useTokenRefresh = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const setAuthenticatedUser = useAuthStore((state) => state.setAuthenticatedUser);
-  
-  // const queryClient = useQueryClient();
-  // const [error, setError] = useState<string | null>(null);
-
   const mutation = useMutation<RefreshTokenResponse, Error>({
     mutationFn: refreshTokenAPI,
     onSuccess: () => {
       // setError(null);
     },
     onError: () => {
-      setAuthenticatedUser(false);
       notify('error', 'Error', 'Session expired, please log in again.');
       // setError('Session expired, please log in again.');
     }
   });
+  
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -206,4 +211,19 @@ export const useTokenRefresh = () => {
   }, [mutation]);
 
   return mutation;
+};
+
+
+// Hook for getUserRole
+export const useGetUserRole = () => {
+  return useMutation<RoleResponse, Error, RoleVariables>({
+    mutationFn: userRole,
+    onSuccess: (data) => {
+      // Update the role in auth store without affecting the token
+      useAuthStore.setState({ userRole: data.role });
+    },
+    onError: (error) => {
+      notify('error', 'エラー', 'ユーザーロールの取得に失敗しました。');
+    }
+  });
 };

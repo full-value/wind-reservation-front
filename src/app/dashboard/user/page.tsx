@@ -337,8 +337,9 @@ const DashboardPage = () => {
                     required
                     className="w-full py-2 px-2 pr-10 rounded-[6px] border mt-1 "
                   >
-                    <option value="manager">マネージャー</option>
                     <option value="user">ユーザー</option>
+                    <option value="member">メンバー</option>
+                    <option value="manager">マネージャー</option>
                   </select>
                  <select
                     id="selectrole"
@@ -423,8 +424,9 @@ const DashboardPage = () => {
                     required
                     className="w-full py-2 px-2 pr-10 rounded-[6px] border mt-1 "
                   >
+                     <option value="user">ユーザー</option>
+                    <option value="member">メンバー</option>
                     <option value="manager">マネージャー</option>
-                    <option value="user">ユーザー</option>
                   </select>
                   <select
                     id="selectrole"

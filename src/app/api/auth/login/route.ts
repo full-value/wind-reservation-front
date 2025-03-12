@@ -16,9 +16,6 @@ export async function POST(req: Request) {
     });
 
     clearTimeout(timeout);
-
-    
-    
     
     if (!res.ok) {     
       const responseText = await res.text();
@@ -27,10 +24,25 @@ export async function POST(req: Request) {
     }
 
     const data = await res.json();
-    await setCookie('accessToken', data.accessToken, { maxAge: 60 * 60 });
-    await setCookie('refreshToken', data.refreshToken, { maxAge: 60 * 60 });
+    
+    // Set cookies with security flags
+    const response = NextResponse.json(data);
+    response.cookies.set('accessToken', data.accessToken, {
+      httpOnly: true, // Prevents JavaScript access
+      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      sameSite: 'strict', // Protects against CSRF
+      maxAge: 60 * 60, // 1 hour
+      path: '/' // Accessible across the site
+    });
 
-    return NextResponse.json(data);
+    response.cookies.set('refreshToken', data.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60, // 1 hour
+      path: '/'
+    });
+    return response;
 
   } catch (error: unknown) {
     if (error instanceof Error && error.name === 'AbortError') {

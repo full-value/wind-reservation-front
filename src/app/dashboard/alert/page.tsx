@@ -88,13 +88,19 @@ const AlertManagementPage = () => {
       // Update existing message
       if (selectedMessage) {
         try {
+          if (selectedMessage.user_id === null) {
+            setSelectedMessage({
+              ...selectedMessage,
+              user_id: "0" // Changed from number 0 to string "0" to match type
+            })
+          }
           await updateAlert(selectedMessage.id, selectedMessage);  
           // Update the list of messages
           const updatedMessages = messages.map((message: Message) =>
             message.id === selectedMessage.id ? selectedMessage : message
-          );
-    
+          );    
           setMessages(updatedMessages);
+
           notify('success', '成功!', '通知が更新されました!');
         } catch {
           notify('error', '失敗!', '通知の更新に失敗しました!');
@@ -106,7 +112,7 @@ const AlertManagementPage = () => {
       try {
         // Create alert data without id and sent_at (these will be handled by the backend)
         const alertData = {
-          user_id: selectedMessage?.user_id || null,
+          user_id: selectedMessage?.user_id || 0,
           state: selectedMessage?.state || "",
           message: selectedMessage?.message || "",
           division: selectedMessage?.division || ""
@@ -186,7 +192,7 @@ const AlertManagementPage = () => {
             <table className="w-full bg-gray-800 text-white rounded-lg overflow-hidden">
               <thead>
                 <tr className="bg-gray-700">
-                  {["番号","メッセージ", "状態", "区分","日時"].map((column) => (
+                  {["番号","メッセージ", "状態", "区分","ユザーID","日時"].map((column) => (
                     <th
                       key={column}
                       className="px-6 py-3 text-left text-[15px] font-medium uppercase tracking-wider cursor-pointer"
@@ -199,7 +205,7 @@ const AlertManagementPage = () => {
                         )}
                       </div>
                     </th>
-                  ))}                  
+                  ))}             
                 </tr>
               </thead>
               <tbody>
@@ -214,6 +220,7 @@ const AlertManagementPage = () => {
                     <td className="px-6 py-3 whitespace-nowrap">{message.message}</td>
                     <td className="px-6 py-3 whitespace-nowrap">{message.state}</td>
                     <td className="px-6 py-3 whitespace-nowrap">{message.division}</td>
+                    <td className="px-6 py-3 whitespace-nowrap">{message.user_id}</td>
                     <td className="px-6 py-3 whitespace-nowrap">{new Date(message.sent_at).toISOString().replace("T", " ").replace(".000Z", "") }</td>
                   </tr>
                 ))}
@@ -279,7 +286,7 @@ const AlertManagementPage = () => {
                           })}
                           className="w-full p-2 border border-gray-300 rounded"
                         >
-                          {["ユーザー","メンバー","メンバー"].map((option, index) => (
+                          {["ユーザー","メンバー","全員"].map((option, index) => (
                             <MenuItem key={`${option}-${index}`} value={option}>
                               {option}
                             </MenuItem>

@@ -23,6 +23,7 @@ export async function POST() {
 
     await deleteCookie('accessToken');
     await deleteCookie('refreshToken');
+    await deleteCookie('userRole');
     return NextResponse.json({ message: 'Logout successful' }, { status: 200 });
   } catch (error: unknown) {
     if (error instanceof Error) {

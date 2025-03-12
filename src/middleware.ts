@@ -1,19 +1,48 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { jwtDecode } from 'jwt-decode';
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.pathname;
-  const userRole = req.cookies.get('userRole')?.value || null;
-
-  // Redirect root `/` to `/dashboard`
-  if (url === '/') {
-    return NextResponse.redirect(new URL('/chat', req.url));
+  const accessToken = req.cookies.get('accessToken')?.value;
+  
+  // Get role from JWT token if it exists
+  let userRole = null;
+  if (accessToken) {
+    try {
+      const decoded = jwtDecode<{ role: string }>(accessToken);
+      userRole = decoded.role;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+    }
   }
-  const accessToken = req.cookies.get('accessToken')?.value || null;
+
+  // Redirect root `/` to appropriate page based on role
+  if (url === '/') {
+    if (!accessToken) {
+      return NextResponse.redirect(new URL('/auth/login', req.url));
+    } else {
+      return NextResponse.redirect(new URL('/chat', req.url));
+    } 
+  }
+
+  // Handle dashboard access
   if (url.startsWith('/dashboard')) {
     if (!accessToken) {
       return NextResponse.redirect(new URL('/chat', req.url));
     }
+    // Only allow member and manager roles to access dashboard
+    if (userRole === 'user') {
+      return NextResponse.redirect(new URL('/chat', req.url));
+    }
+    // For member role, restrict access to only allowed dashboard pages
+    if (userRole === 'member') {
+      const allowedPaths = ['/dashboard', '/dashboard/flat', '/dashboard/work','/dashboard/message'];
+      if (!allowedPaths.some(path => url === path)) {
+        return NextResponse.redirect(new URL('/dashboard', req.url));
+      }
+    }
+    // Manager role can access all dashboard pages
     return NextResponse.next();
   }
 

@@ -6,6 +6,7 @@ interface NotificationData {
  
     Notification_Num: number;
     Message_Num: number;
+    userRole: string;
     
   };
   setField: (key: keyof NotificationData['NotificationNum'], value: string | boolean | number) => void;
@@ -16,7 +17,8 @@ export const useNotificationData = create<NotificationData>((set) => ({
   NotificationNum: { // Fixed typo from 'cahtData' to 'NotificationNum'
     
     Notification_Num:0,
-    Message_Num:0
+    Message_Num:0,
+    userRole:''
   },
   setField: (key, value) =>
     set((state) => ({
@@ -29,7 +31,8 @@ export const useNotificationData = create<NotificationData>((set) => ({
     set(() => ({
       NotificationNum: {
         Notification_Num:0,
-        Message_Num:0
+        Message_Num:0,
+        userRole:''
       },
     })),
 }));

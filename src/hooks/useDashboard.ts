@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNotificationData } from '@/state/notificationNum';
 
 export const useDashboard = () => {
@@ -16,7 +16,11 @@ export const useDashboard = () => {
     setError(null);
 
     try {
-      const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' }, ...options });
+      const res = await fetch(url, { 
+        method: 'GET', 
+        headers: { 'Content-Type': 'application/json' }, 
+        ...options 
+      });
       
       if (!res.ok) {
         await handleFetchError(res);
@@ -24,7 +28,8 @@ export const useDashboard = () => {
 
       return await res.json();
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Something went wrong');
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong';
+      setError(errorMessage);
       throw error;
     } finally {
       setLoading(false);
@@ -36,10 +41,8 @@ export const useDashboard = () => {
 
   // Get API Log Data
   const getApiLogData = async (pageNum: number, searchTerm: string) => {
-    if (searchTerm === "") {
-      searchTerm = "!allData!";
-    }
-    return fetchData(`/api/log/getApiLogData/${pageNum}/${searchTerm}`);
+    const term = searchTerm === "" ? "!allData!" : searchTerm;
+    return fetchData(`/api/log/getApiLogData/${pageNum}/${term}`);
   };
 
   // Get Notifications
@@ -48,7 +51,7 @@ export const useDashboard = () => {
   // Mark as Read
   const markAsRead = async (id: number) => {
     try {
-      const response = await fetch(`/api/alerts/${id}/read`, {
+      const response = await fetch(`/api/message?id=${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +64,8 @@ export const useDashboard = () => {
       
       return await response.json();
     } catch (error) {
-      console.error('Error marking alert as read:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Error marking alert as read';
+      console.error(errorMessage);
       throw error;
     }
   };
@@ -105,6 +109,12 @@ export const useDashboard = () => {
     return data;
   };
 
+  const useGetUserRole = async () => {
+    const data = await fetchData('/api/auth/userRole');
+    setField('userRole', data.role);
+    return data;
+  };
+
   // Other Methods (Create/Update/Delete)
   const createFlat = async (body: any) => fetchData('/api/flat/createFlat', { method: 'POST', body: JSON.stringify(body) });
   const createWork = async (body: any) => fetchData('/api/work/createWork', { method: 'POST', body: JSON.stringify(body) });
@@ -118,8 +128,29 @@ export const useDashboard = () => {
   const deleteWork = async (id: number) => fetchData('/api/work/deleteWork', { method: 'POST', body: JSON.stringify({ id }) });
   const deleteUser = async (id: number) => fetchData('/api/user/deleteUser', { method: 'POST', body: JSON.stringify({ id }) });
   const deleteReservation = async (id: number) => fetchData('/api/reservation/deleteReservation', { method: 'POST', body: JSON.stringify({ id }) });
-
   const createReservation = async (body: any) => fetchData('/api/reservation/createReservation', { method: 'POST', body: JSON.stringify(body) });
+
+
+  const getMessages = async () => {
+    try {
+      const response = await fetch('/api/message', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch alerts');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error fetching alerts';
+      console.error(errorMessage);
+      throw error;
+    }
+  };
 
   // Alert Management
   const createAlert = async (body: any) => fetchData('/api/alerts', {
@@ -152,10 +183,12 @@ export const useDashboard = () => {
       
       return await response.json();
     } catch (error) {
-      console.error('Error fetching alerts:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Error fetching alerts';
+      console.error(errorMessage);
       throw error;
     }
   };
+
   // Get All Alerts (with read status)
   const getAllAlerts = async () => {
     try {
@@ -172,17 +205,44 @@ export const useDashboard = () => {
       
       return await response.json();
     } catch (error) {
-      console.error('Error fetching all alerts:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Error fetching all alerts';
+      console.error(errorMessage);
       throw error;
     }
   };
 
-
   return {
-    getFlatData, changeFlat, createFlat, deleteFlat, getWorkData, createWork, changeWork, deleteWork,
-    getUserData, changeUser, deleteUser, createUser, getErrorLogData, getChangeLogData, getApiLogData,
-    getNotificationNum, getNotification, markAsRead, getReservationListData, updateReservation, deleteReservation,
-    createReservation, getDashboardData, loading, error,
-    createAlert,updateAlert,deleteAlert,getAlerts,getAllAlerts
+    getFlatData,
+    changeFlat,
+    createFlat,
+    deleteFlat,
+    getWorkData,
+    createWork,
+    changeWork,
+    deleteWork,
+    getUserData,
+    changeUser,
+    deleteUser,
+    createUser,
+    getErrorLogData,
+    getChangeLogData,
+    getApiLogData,
+    getNotificationNum,
+    getNotification,
+    markAsRead,
+    getReservationListData,
+    updateReservation,
+    deleteReservation,
+    createReservation,
+    getDashboardData,
+    loading,
+    error,
+    createAlert,
+    updateAlert,
+    deleteAlert,
+    getAlerts,
+    getAllAlerts,
+    useGetUserRole,
+    getMessages
   };
 };
