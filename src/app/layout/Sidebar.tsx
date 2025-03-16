@@ -45,16 +45,18 @@ const Sidebar = () => {
 
   const menuItems = [
     { path: '/dashboard', Icon: DashboardIcon, label: 'ダッシュボード', authority: ['manager', 'member', 'user'] },
-    { path: '/dashboard/calendar', Icon: CalendarIcon, label: 'カレンダー', authority: ['manager'] },
-    { path: '/dashboard/flat', Icon: BuildingIcon, label: '物件一覧', authority: ['manager', "member"] },
-    { path: '/dashboard/work', Icon: AgendarIcon, label: '案件一覧', authority: ['manager', 'member'] },
+    // { path: '/dashboard/calendar', Icon: CalendarIcon, label: 'カレンダー', authority: ['manager'] },
+    // { path: '/dashboard/flat', Icon: BuildingIcon, label: '物件一覧', authority: ['manager', "member"] },
+    // { path: '/dashboard/work', Icon: AgendarIcon, label: '案件一覧', authority: ['manager', 'member'] },
     { path: '/dashboard/user', Icon: UserIcon, label: 'ユーザー管理', authority: ['manager'] },
-    { path: '/dashboard/history', Icon: HistoryIcon, label: '変更履歴', authority: ['manager'] },
+    // { path: '/dashboard/history', Icon: HistoryIcon, label: '変更履歴', authority: ['manager'] },
     { path: '/dashboard/api_history', Icon: ApiIcon, label: 'APIログ', authority: ['manager'] },
-    { path: '/dashboard/error_log', Icon: ErrorIcon, label: 'エラーログ', authority: ['manager'] },
-    { path: '/dashboard/file', Icon: FileIcon, label: 'ファイル', authority: ['manager'] },
+    // { path: '/dashboard/error_log', Icon: ErrorIcon, label: 'エラーログ', authority: ['manager'] },
+    // { path: '/dashboard/file', Icon: FileIcon, label: 'ファイル', authority: ['manager'] },
     { path: '/dashboard/alert', Icon: AlertIcon, label: '警告', authority: ['manager'] },
-    { path: '/dashboard/message', Icon: MessageIcon, label: 'メッセージ', authority: ['manager', "member","user"] },
+    { path: '/dashboard/company', Icon: BuildingIcon, label: '工事会社管理', authority: ['manager', "member"] },
+
+    // { path: '/dashboard/message', Icon: MessageIcon, label: 'メッセージ', authority: ['manager', "member","user"] },
   ];
 
   const renderMenuItem = (path: string, Icon: any, label: string, authority: string[]) => {
@@ -63,13 +65,14 @@ const Sidebar = () => {
     return (
       <li
         key={path}
-        className={`${
-          isActive ? 'bg-[#ff8892] text-white' : ''
-        } rounded-lg p-3 hover:bg-[#ff8892] text-white transition-all duration-100`}
+        className={`w-full text-white ${
+          isActive ? 'bg-[#1e293a] text-white' : ''
+
+        } ${isMobile && 'flex justify-center ml-5'} p-3 hover:bg-[#1e293a] text-red transition-all duration-100`}
       >
         <Link href={path} className="flex items-center">
-          <Icon className={`w-[18px] h-[18px] ${isActive && "text-[#FFFFFF]"}`} />
-          {(isSidebarOpen || isMobile) && <span className={`ml-2 ${isActive && "text-[#FFFFFF]"}`}>{label}</span>}
+          <Icon className={`w-[20px] h-[20px] text-[#3d4859]`} />
+          {(isSidebarOpen || isMobile) && <span className={`ml-4 text-[15px] ${isActive && "m-0"}`}>{label}</span>}
         </Link>
       </li>
     );
@@ -77,13 +80,13 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`sticky top-0 z-30 bg-gray-800 transition-all min-h-screen duration-100 rounded-r-[20px] border-r-[1px]  
+      className={`sticky top-0 z-30 bg-[#233044] transition-all min-h-screen duration-100 
         ${isSidebarOpen ? 'w-full md:w-64' : 'w-full md:w-20'} 
-        ${!isMobile ? 'fixed ' : ''}`}
+        ${!isMobile ? 'fixed ' : 'mb-2'}`}
     >
-      <div className="p-4">
-        <div className={`flex justify-between items-center mt-2 ${isMobile ? 'mb-3' : 'mb-16' } }`}>
-          <div className="flex items-center">
+      <div className="">
+        <div className={`flex justify-between items-center px-3 mt-2 ${isMobile ? 'mb-5' : 'mb-16' } }`}>
+          <div className="flex items-center ">
             {isSidebarOpen ? (
               <div className="flex justify-center items-center">
                 <Image src="/assets/images/auth/dash_logo.png" alt="logo" width={60} height={60} style={{ width: "auto", height: "auto" }}  priority />
@@ -109,10 +112,10 @@ const Sidebar = () => {
             renderMenuItem(item.path, item.Icon, item.label, item.authority)
           )}
           
-          <li className="rounded-lg p-3 hover:bg-[#ff8892] text-white transition-all duration-100" onClick={handleLogout}>
+          <li className="rounded-lg p-3 hover:bg-[#1e293a] text-white transition-all duration-100" onClick={handleLogout}>
             <Link href="" className="flex items-center">
-              <LogoutIcon className="w-[18px] text-[#F3A0FF] h-[18px]" />
-              {(isSidebarOpen || isMobile) && <span className="ml-2">ログアウト</span>}
+              <LogoutIcon className="w-[20px] text-[#3d4859] h-[20px]" />
+              {(isSidebarOpen || isMobile) && <span className="ml-2 text-[15px]">ログアウト</span>}
             </Link>
           </li>
         </ul>

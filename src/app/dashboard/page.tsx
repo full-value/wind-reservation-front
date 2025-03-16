@@ -40,7 +40,7 @@ const DashboardPage = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col">
-        <div className="bg-gray-900 p-8">
+        <div className="bg-[#1b2635] p-8">
           <div className="flex flex-wrap w-full gap-10 justify-center p-10">
             <div className="flex w-[260px] gap-5 bg-[#242a38] justify-center px-4 py-5 rounded-[10px] ">
               <BuildingIcon className="w-[60px] h-[60px] text-[#afb6c4]" />

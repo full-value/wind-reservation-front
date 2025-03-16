@@ -211,8 +211,8 @@ const DashboardPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col bg-gray-900">
-        <div className="bg-gray-900 p-8">
+      <div className="flex flex-col bg-[#1b2635]">
+        <div className="bg-[#1b2635] p-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-white mb-8">ユーザー管理</h1>
             <CustomButton
@@ -227,7 +227,7 @@ const DashboardPage = () => {
             <input
               type="text"
               placeholder="検索ユーザー..."
-              className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 bg-[#667486] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -235,9 +235,9 @@ const DashboardPage = () => {
           </div>
 
           <div className="overflow-x-aut ">
-            <table className="w-full bg-gray-800 text-white rounded-lg overflow-hidden">
+            <table className="w-full #bg-[#233044] text-white rounded-lg overflow-hidden">
               <thead>
-                <tr className="bg-gray-700">
+                <tr className="bg-[#667486]">
                   {["番号","ユーザID", "名前", "メール","電話番号","住所","許可状態","役割"].map((column) => (
                     <th
                       key={column}
@@ -258,7 +258,7 @@ const DashboardPage = () => {
               </thead>
               <tbody>
                 {currentUsers.map((user, index) => (
-                  <tr key={user.id} className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700`}>
+                  <tr key={user.id} className={`${index % 2 === 0 ? "bg-[#2a3a53]" : "bg-[#2a364d]"} hover:bg-[#444e5c]`}>
                     <td className="pl-4 py-3 whitespace-nowrap">{(currentPage-1)*itemsPerPage+index+1}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.id}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.name}</td>

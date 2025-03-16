@@ -72,7 +72,7 @@ export default function ExcelUploader() {
   return (
     <DashboardLayout>
       <div className="flex flex-col">
-        <div className="bg-gray-900 p-8">
+        <div className="bg-[#1b2635] p-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-white mb-8">ファイルーアップロード</h1>
           </div>
@@ -97,7 +97,7 @@ export default function ExcelUploader() {
             {/* <p className='text-white'>{file}</p> */}
           </div>
           <div className="overflow-x-aut ">
-            <table className="w-full bg-gray-800 text-white rounded-lg overflow-hidden">
+            <table className="w-fullbg-[#1b2635] text-white rounded-lg overflow-hidden">
               <thead>
                 <tr className="bg-gray-700">
                   {["番号", "案件名","部屋番号","物件名","予約日時","区分"].map((column) => (

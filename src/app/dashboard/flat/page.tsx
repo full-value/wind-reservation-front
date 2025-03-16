@@ -164,7 +164,7 @@ const FlatPage = () => {
   return (
     <DashboardLayout>
       <div className="flex flex-col">
-        <div className="bg-gray-900 p-8">
+        <div className="bg-[#1b2635] p-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-white mb-8">物件一覧</h1>
             <CustomButton
@@ -179,7 +179,7 @@ const FlatPage = () => {
             <input
               type="text"
               placeholder="検索物件..."
-              className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2bg-[#1b2635] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -187,7 +187,7 @@ const FlatPage = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full bg-gray-800 text-white rounded-lg overflow-hidden">
+            <table className="w-fullbg-[#1b2635] text-white rounded-lg overflow-hidden">
               <thead>
                 <tr className="bg-gray-700">
                   {["番号", "名前", "住所"].map((column) => (

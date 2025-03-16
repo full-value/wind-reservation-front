@@ -24,10 +24,10 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row bg-gray-900">
+    <div className="flex flex-col w-full md:flex-row bg-[#1b2635]">
       <Sidebar />
-      <div className="flex-1 bg-gray-900">
-        <div className="flex w-full bg-gray-900 border-[#414141] py-[10px] px-[30px] justify-between">
+      <div className="flex-1 bg-[#1b2635]">
+        <div className="flex w-full bg-[#1b2635] border-[#414141] py-[10px] px-[30px] justify-between">
           <div className="flex py-2 items-center gap-2">
           </div>
           <div className="flex items-center gap-3 py-2 rounded-full">
