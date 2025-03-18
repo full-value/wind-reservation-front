@@ -94,6 +94,7 @@ export const useDashboard = () => {
 
   // Get User Data
   const getUserData = async () => fetchData('/api/user/getAllData');
+  const getMemberData = async () => fetchData('/api/user/memberData');
 
   // Get Error Log Data
   const getErrorLogData = async () => fetchData('/api/log/getErrorData');
@@ -243,6 +244,7 @@ export const useDashboard = () => {
     getAlerts,
     getAllAlerts,
     useGetUserRole,
-    getMessages
+    getMessages,
+    getMemberData
   };
 };

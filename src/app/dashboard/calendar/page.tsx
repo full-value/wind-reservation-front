@@ -82,8 +82,7 @@ const Calendar = () => {
           notify('success', '成功!', '予約が成果的に行われました!');
         }catch{
           notify('error', '失敗!', '予約追加に失敗しました!');
-        }
-        
+        }      
   
         setModalOpen(false);
       } else {
@@ -184,8 +183,8 @@ const Calendar = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col bg-gray-900">      
-        <div className="bg-gray-900 p-8">   
+      <div className="flex flex-col bg-[#1b2635]">      
+        <div className="bg-[#1b2635] p-8">   
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-white mb-8">カレンダー</h1>
             <CustomButton

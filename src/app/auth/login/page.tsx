@@ -41,7 +41,7 @@ const Login = () => {
     setErrors(null);
 
     mutate({ email, password }, {
-      onSuccess: () => router.push('/dashboard'),
+      onSuccess: () => router.push('/dashboard/company'),
       onError: () => {        
         setErrors({ email: '無効な資格情報' });
       },

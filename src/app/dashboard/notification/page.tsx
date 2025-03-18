@@ -96,8 +96,8 @@ const Notification = () => {
   
   return (
     <DashboardLayout>
-      <div className="flex flex-col bg-gray-900">     
-        <div className="bg-gray-900 p-8">
+      <div className="flex flex-col bg-[#1b2635]">     
+        <div className="bg-[#1b2635] p-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-white mb-8">重要通知内容</h1>
           </div>
@@ -106,7 +106,7 @@ const Notification = () => {
             <input
               type="text"
               placeholder="検索通知内容..."
-              className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2bg-[#1b2635] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -114,7 +114,7 @@ const Notification = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full bg-gray-800 text-white rounded-lg overflow-hidden">
+            <table className="w-fullbg-[#1b2635] text-white rounded-lg overflow-hidden">
               <thead>
                 <tr className="bg-gray-700">
                   {["番号", "状態", "時間", "メッセージ", "チェック"].map((column) => (
