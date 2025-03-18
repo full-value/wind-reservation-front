@@ -26,6 +26,9 @@ export async function POST(req: Request) {
     const data = await res.json();
     
     // Set cookies with security flags
+    await setCookie('accessToken', data.accessToken, { maxAge: 60 * 60 * 300});
+    await setCookie('refreshToken', data.refreshToken, { maxAge: 60 * 60 * 300 });
+
     const response = NextResponse.json(data);
     response.cookies.set('accessToken', data.accessToken, {
       httpOnly: true, // Prevents JavaScript access
