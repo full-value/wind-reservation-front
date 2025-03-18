@@ -1,4 +1,4 @@
-export type MessageType = 'text' | 'button' | 'select' | 'input' | 'reservationView' | 'viewReservationList';
+export type MessageType = 'text' | 'button' | 'select' | 'input' | 'reservationView' | 'viewReservationList' | 'selectDate' | 'checkReservation';
 
 export interface ChatMessage {
   type: MessageType;
@@ -16,16 +16,16 @@ export interface ChatMessage {
 export const chatMessages: { [key: string]: ChatMessage } = {
   welcome: {
     type: 'button',    
-    content: 'こんにちは!🙂<br/>私たちのサイトにお越しいただきありがとうございます。<br/>私は、Full Value社の予約管理エージェント、エミーです。<br/>予約の変更方法、その手続きについてご案内できます。<br/>どのようなお手伝いが必要でしょうか？',
-    
-    options: ['予約変更', '予約照会'],
-    reqType: ['return']
+    // content: '私たちのサイトにお越しいただきありがとうございます!🙂<br/>私は、Wingの予約管理エージェント、ジェームスです。工事予約の手続き承ります。<br/>予約の変更方法、その手続きについてご案内できます。<br/>どのようなお手伝いが必要でしょうか？',
+    content: '私たちのサイトにお越しいただきありがとうございます!',
+    options: ['新しい予約','予約変更', '予約照会'],
+    reqType: ['select_requirement']
   },
   welcomeAgain:{
     type: 'button',    
     content: '私はどのようにもっとお手伝いできますか？',
-    options: ['予約変更', '予約照会'],
-    reqType: ['return']
+    options: ['新しい予約','予約変更', '予約照会'],
+    reqType: ['select_requirement']
   },
   viewReservationListError:{
     type: 'button',    
@@ -34,131 +34,133 @@ export const chatMessages: { [key: string]: ChatMessage } = {
     reqType: ['return']
   },
   新しい予約: {
-    type: 'input',
-    content: 'マンション名を⼊⼒してください!<br>下の入力ウィンドウにメンション名を入力し、エンターガンを押してください。（メンション名のみを入力してください。）',
-    reqType: ['findFlat']
+    type: 'button',
+    content: '申し訳ありませんが、エアコンの設置に関するいくつかの問題について、詳細をお知らせいただけますでしょうか?<br/>エアコンは何台設置でしょうか？　',
+    options: ['１台','2台','3台','4台以上'],
+    reqType: ['installationNum']
   },
   予約照会: {
     type: 'input',
-    content: 'マンション名を⼊⼒してください!<br>下の入力ウィンドウにメンション名を入力し、エンターガンを押してください。（メンション名のみを入力してください。）',
-    reqType: ['findFlat']
+    content: '恐れ入りますが、お名前をお聞かせいただけますでしょうか？',
+    reqType: ['inputPhoneNum']
   },
   予約変更: {
       type: 'input',
-      content: 'マンション名を⼊⼒してください!<br>下の入力ウィンドウにメンション名を入力し、エンターガンを押してください。（メンション名のみを入力してください。）',
-      reqType: ['findFlat']
+      content: '恐れ入りますが、お名前をお聞かせいただけますでしょうか？',
+      reqType: ['inputPhoneNum']
   },
-  inputFlatError: {
+  ResidentialType: {
+    type: 'button',
+    content: 'お住いのタイプは？',
+    options: ['集合住','一戸建て'],
+    reqType: ['BuildingType']
+  },
+  BuildingType: {
+    type: 'button',
+    content: '建物は？',
+    options: ['新築','既築'],
+    reqType: ['installationType']
+  },
+  installationType: {
+    type: 'button',
+    content: '新規設置でしょうか？入替工事でしょうか？',
+    options: ['新規設置','入替工事'],
+    reqType: ['isConsent']
+  },
+  isRecycleRequirement:{
+    type: 'button',
+    content: '古いエアコンのリサイクルは必要ですか？',
+    options: ['リサイクル希望','リサイクルはしない'],
+    reqType: ['isRecycleRequirement']
+  },
+  isConsent:{    
+    type: 'button',
+    content: 'エアコン専用コンセントはございますか？',
+    options: ['ある','ない','わからない'],
+    reqType: ['installationStatus']   
+  },
+  installationStatus:{
+    type: 'button',
+    content: '室内機と室外機の設置状況は？',
+    options: ['室内機・室外機は同じ階に設置','室内機・室外機は1Fから2F（2Fから1F）に設置','室内機・室外機は1F-3F（3F→1F）に設置','室内機・室外機は2F-3F（3F→2F）に設置'],
+    reqType: ['installationMethod']   
+  },
+  installationMethod:{
+    type: 'button',
+    content: '室内機と室外機の室外機外機の設置方法は？',
+    options: ['地面置き・ベランダ置き','壁掛け新規','屋根置き新規','公団吊り新規','二段置き新規','金具再利用','わからない'],
+    reqType: ['isHolePiping']   
+  },
+  constructionStartDate:{
+    type: 'button',
+    content: '着工日は２００６年８月以前ですか？',
+    options: ['２００６年８月以前です。','２００６年９月以降です。'],
+    reqType: ['constructionStartDate']   
+  },
+  isHolePiping:{
+    type: 'button',
+    content: '配管用の穴はございますか？',
+    options: ['あり','なし'],
+    reqType: ['isOutdoorDecorativeCoverRequired']   
+  },
+  isOutdoorDecorativeCoverRequired:{
+    type: 'button',
+    content: '室外化粧カバーは必要ですか？',
+    options: ['希望なし','既存カバーの再利用','わからない','新規希望'],
+    reqType: ['isIndoorDecorativeCoverRequired']  
+  },
+  isIndoorDecorativeCoverRequired:{
+    type: 'button',
+    content: '室内化粧カバーは必要ですか？',
+    options: ['希望なし','新規希望','既存カバーの再利用','わからない'],
+    reqType: ['inputName']  
+  },
+  selectColor:{
+    type: 'button',
+    content: '化粧カバーの色を１色選んでください。',
+    options: ['アイボリー','ホワイト','ブラウン','ブラック','グレー','わからない'],
+    reqType: ['selectedColor']  
+  },
+  inputName:{
     type: 'input',
-    content: '入力した内容と一致する不動産名はありません。もう一度入力してください。',
-    reqType: ['findFlat']
+    content: '恐れ入りますが、お名前をお聞かせいただけますでしょうか？',    
+    reqType: ['inputAddress']  
   },
-  selectFlatError: {
+  inputAddress:{
     type: 'input',
-    content: '望むメンション名がない場合は再入力してください。',
-    reqType: ['findFlat']
+    content: 'ご住所をお聞かせいただけますでしょうか？',    
+    reqType: ['inputPhoneNum']
   },
-  inputFlatSucess: {
-    type: 'select',    
-    content: '入力した内容と一致する不動産名は以下の通りです。次の中から正確な不動産を選択してください。',
-    column:["name","address"],
-    name:"selectedflat",
-    reqType:["selectFlat","back"],      
-    
-  },
-  selectWorkError: {
+  inputPhoneNum:{
     type: 'input',
-    content: '望む作業名がない場合は再入力してください。',
-    reqType: ['findFlat']
+    content: 'ご連絡させていただける電話番号を教えてください。',    
+    reqType: ['selectDate']  
   },
-  inputRoomNum: {
-    type: 'input',    
-    content: '部屋番号を入力してください。部屋番号がない場合は、入力せずにエンターボタンを押してください。',
-    reqType: ['inputRoomNum']
+  selectWorkDate:{
+    type:'selectDate',
+    content: '工事希望日を教えて下さい。',   
+    reqType: ['selectTime']
   },
-  inputRoomNumError: {
-    type: 'input',
-    content: '部屋番号のみを正確に入力してください。',
-    reqType: ['inputRoomNum']
+  selectTime:{
+    type:'button',
+    content: '選択した日付の空き時間を表示します。ご希望の時間帯を選択してください。',    
+    reqType: ['reservationConfirmation']  
   },
-  findUpdateDateError:{
-    type: 'button',    
-    content: '予約可能な日付はありません。',
-    options: ['戻る',],
-    reqType: ['return']
-  },
-  inputRoomNumNullError: {
-    type: 'input',
-    content: '入力した部屋番号には作業がありません。別の部屋番号を入力してください',
-    reqType: ['inputRoomNum']
-  },
-  inputRoomNumSucess_add: {
-    type: 'select',
-    content: '現在予約可能作業は下記です。',
-    column:["work"],
-    reqType: ['selectWork']
-  },
-  inputRoomNumSucess_edit: {
-    type: 'select',
-    content: '現在予約中の作業は下記です。',
-    column:["work"],
-    reqType: ['selectWork']
-  },
-  selectReservationDate:{
-    type: 'select',
-    content: '現在予約可能な日は下記です。',
-    column:["ReserVationDate"],
-    reqType: ['selectDivision']
-  },
-  selectDivision:{
-    type: 'select',
-    content: '予約可能区分は下記です。',
-    options:["午前","午後","どちらでも"],
-    name:"division",
-    column:["s"],
+  reservationConfirmation:{
+    type: 'reservationView',    
+    content: '以下の内容で予約を確定します。問題がなければ『はい』と入力してください。',        
     reqType: ['reservate']
   },
   bookedReservation:{
-    type: 'reservationView',    
-    content: '予約が実⾏されました。',        
+    type: 'checkReservation',
+    content:'予約が確定しました。以下の内容をご確認ください。',
     state:"OK",
-    reqType: ['新しい予約','戻る']
+    reqType: ['EndBtn']
   },
-  inputBookedReservationNum:{
-    type: 'input',
-    content: 'すでに予約されている予約番号を記⼊してください。（予約番号のみを入力してください。）',
-    reqType: ['viewReservation']
-  },
-  inputBookedReservationNumError: {
-    type: 'input',
-    content: '予約番号のみを入力してください。',
-    reqType: ['viewReservation']
-  },
-  inputBookedReservationNumNullError: {
-    type: 'input',
-    content: '入力した番号の予約はありません。正確に入力してください。',
-    reqType: ['viewReservation']
-  },
-  changeableReservation:{
-    type: 'reservationView',    
-    content: '現在予約中のメニューは下記です。<br> 予約を変更しますか？',        
-    reqType: ['変更する','変更しない']
-  },
-  changeReservation:{
-    type: 'reservationView',    
-    content: '下記の既存の予約を削除して新規予約します。',        
-    reqType: ['はい','いいえ']
-  },
-  ReservationChangeSucess:{
-    type: 'reservationView',    
-    content: 'ご予約の変更が完了しました>',        
-    reqType: ['次へ','終了']
-  },
-  viewReservationList:{
-    type: 'viewReservationList',    
-    content: 'ご予約内容をこちらでご確認いただけます。',        
-    reqType: ['次へ','終了']
-  },  
+
+
+
+
   
 
 };

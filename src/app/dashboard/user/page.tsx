@@ -207,8 +207,6 @@ const DashboardPage = () => {
     }
     handleCloseModal(); 
   }
-
-
   return (
     <DashboardLayout>
       <div className="flex flex-col bg-[#1b2635]">
@@ -222,7 +220,6 @@ const DashboardPage = () => {
               onClick={() => openModal(null, 'create')} // Open modal for creating a new entry
             />
           </div>
-
           <div className="mb-4 relative">
             <input
               type="text"
@@ -234,7 +231,7 @@ const DashboardPage = () => {
             <FaSearch className="absolute right-3 top-3 text-gray-400" />
           </div>
 
-          <div className="overflow-x-aut ">
+          <div className="overflow-x-auto ">
             <table className="w-full #bg-[#233044] text-white rounded-lg overflow-hidden">
               <thead>
                 <tr className="bg-[#667486]">
@@ -266,7 +263,7 @@ const DashboardPage = () => {
                     <td className="pl-4 py-3 whitespace-nowrap">{user.phoneNum}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.address}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.permissionStatus==="inpermission"?"不許可":"許可"}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{ user.role.includes("user") ?"ユーザー" : "マネージャー"}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{ user.role.includes("user") ?"ユーザー" :user.role.includes("member") ? "メンバー":"マネージャー"}</td>
                     <td className="pl-4 py-3 whitespace-nowrap flex gap-3">
                       <button onClick={() => openModal(user, 'edit')} className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">編集</button>
                       <button onClick={() => openModal(user, 'delete')} className="bg-red-500 hover:bg-red-700 px-4 py-2 rounded">削除</button>
@@ -276,7 +273,7 @@ const DashboardPage = () => {
               </tbody>         
             </table> 
             <div className="flex justify-center">
-              <Stack spacing={2} className='bg-gray-700 mt-1 rounded-[10px] py-1 px-5'>                    
+              <Stack spacing={2} className='bg-[#667486] mt-1 rounded-[10px] py-1 px-5'>                    
                 <Pagination 
                   color="primary" 
                   count={Math.ceil(sortedUsers.length / itemsPerPage)} 
@@ -322,7 +319,6 @@ const DashboardPage = () => {
                     }}
                     className="w-full p-2 border border-gray-300 rounded"
                   />
-
                   <input
                       type="text"
                       placeholder="住所"
@@ -461,7 +457,6 @@ const DashboardPage = () => {
               <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
                 <h2 className="text-xl font-bold mb-4">資料を削除しますか?</h2>
                 <p className="mb-6">この操作は取り消せません。削除を確認してください。</p>
-
                 <div className="flex justify-end mt-4 space-x-2">
                   <button
                     onClick={handleDelte}  // This will trigger the deletion action
@@ -479,7 +474,6 @@ const DashboardPage = () => {
               </div>
             </div>
           )}
-
         </Modal>
       </div>
     </DashboardLayout>

@@ -4,13 +4,35 @@ import { create } from 'zustand';
 interface ChatStore {
   chatData: {
     requirement: string;
-    flatName: string;
+    installNum: string;
+    ResidentialType: string;
+    BuildingType:string;
+    installationType:string;
+    reinstall:string;
+    recycleRequirement:string;
+    isConsent:string;
+    installationStatus:string;
+    installationMethod:string;
+    isOutdoorDecorativeCoverRequired:string;
+    isHolePiping:string;
+    outdoorCosmeticCoberColor:string;
+    isIndoorDecorativeCoverRequired:string;
+    customerName:string;
+    customerAddress:string;
+    customerPhoneNum:string;
+    selectTime:string;
+    selectDate:string;
+
+
+
+    
     roomNum: number;
     workName:string;
     scheduledTask: string;    
     changeReservationId: number;
     changeReservationDate: string;
-    changeReservationDivision: string;    
+    changeReservationDivision: string;
+
   };
   setField: (key: keyof ChatStore['chatData'], value: string | boolean | number) => void;
   resetForm: () => void;
@@ -19,7 +41,26 @@ interface ChatStore {
 export const useChatStore = create<ChatStore>((set) => ({
   chatData: { // Fixed typo from 'cahtData' to 'chatData'
     requirement: '',
-    flatName:'',
+    installNum:'',
+    ResidentialType:'',
+    BuildingType:'',
+    installationType:'',
+    reinstall:'',
+    recycleRequirement:'',
+    isConsent:'',
+    installationStatus:'',
+    installationMethod:'',
+    isOutdoorDecorativeCoverRequired:'',
+    isHolePiping:'',
+    outdoorCosmeticCoberColor:'',
+    isIndoorDecorativeCoverRequired:'',
+    customerName:'',
+    customerAddress:'',
+    customerPhoneNum:'',
+    selectTime:'',
+    selectDate:'',
+
+
     roomNum:0,
     workName:'',
     scheduledTask:'',
@@ -39,7 +80,27 @@ export const useChatStore = create<ChatStore>((set) => ({
     set(() => ({
       chatData: {
         requirement: '',
-        flatName: '',
+        installNum:'',
+        ResidentialType:'',
+        BuildingType:'',
+        installationType:'',
+        reinstall:'',
+        recycleRequirement:'',
+        isConsent:'',
+        installationStatus:'',
+        installationMethod:'',
+        isOutdoorDecorativeCoverRequired:'',
+        isHolePiping:'',
+        outdoorCosmeticCoberColor:'',
+        isIndoorDecorativeCoverRequired:'',
+        customerName:'',
+        customerAddress:'',
+        customerPhoneNum:'',
+        selectTime:'',
+        selectDate:'',
+
+
+
         roomNum:0,
         workName:'',
         scheduledTask:'',

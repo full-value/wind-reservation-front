@@ -111,9 +111,9 @@ const Api_Log = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full bg-[#233044] text-white rounded-lg overflow-hidden border-[#515151] border-1">
+          <table className="w-full #bg-[#233044] text-white rounded-lg overflow-hidden">
               <thead>
-                <tr className="bg-gray-700 ">
+                <tr className="bg-[#667486]">
                   {["番号", "状態", "時間", "メッセージ"].map((column, index) => (
                     <th
                       key={index}
@@ -132,7 +132,7 @@ const Api_Log = () => {
               </thead>
               <tbody>
                 {apiLogs.map((log, index) => (
-                  <tr key={log.id} className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700`} onClick={() => openModal(log)}>
+                  <tr key={log.id} className={`${index % 2 === 0 ? "bg-[#2a3a53]" : "bg-[#2a364d]"} hover:bg-[#444e5c]`}>
                     <td className="px-6 py-3 w-[5%] whitespace-nowrap">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-6 py-3 w-[5%] whitespace-nowrap">
                       {log.level === "change" ? <CheckIcon /> : log.level === "error" ? <ErrorIcon /> : log.level === "info" ? <MessageIcon /> : <BellIcon />}
@@ -144,7 +144,7 @@ const Api_Log = () => {
               </tbody>
             </table>
             <div className="flex justify-center">
-              <Stack spacing={2} className="bg-gray-700 mt-1 rounded-[10px] py-1 px-5">
+              <Stack spacing={2} className="bg-[#667486] mt-1 rounded-[10px] py-1 px-5">
                 <Pagination color="primary" count={totalPage} page={currentPage} onChange={handlePageChange} />
               </Stack>
             </div>

@@ -82,8 +82,7 @@ const Calendar = () => {
           notify('success', '成功!', '予約が成果的に行われました!');
         }catch{
           notify('error', '失敗!', '予約追加に失敗しました!');
-        }
-        
+        }      
   
         setModalOpen(false);
       } else {

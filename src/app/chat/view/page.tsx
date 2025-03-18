@@ -110,15 +110,6 @@ const WorkView = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col w-[30%] bg-[#83d0e4] p-5 rounded-[20px] relative items-center text-center pointer-events-none">
-            <Image
-              src="/assets/images/consultant.png"
-              alt="Consultant"
-              width={300}
-              height={300} // Adjust the height accordingly
-              className="absolute bottom-0 left-1/2 w-[300px] h-auto select-none ease-in-out duration-200 transform -translate-x-1/2"
-            />
-          </div>
         </div>
       </div>
     </div>
