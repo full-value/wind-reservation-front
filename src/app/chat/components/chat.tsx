@@ -71,14 +71,14 @@ const Chat = () => {
   }, [messages, typingDelay, resetForm]); 
         
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>,reqType:string) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (reqType:string) => {
+    
      if(inputValue !==""){
       handleInputEnterPress(inputValue,reqType[0]);
       setInputValue('');
      }
       
-    }
+    
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -130,7 +130,7 @@ const Chat = () => {
                 }}
               />
             
-            {message.type === 'button' && showOptions && (
+            {message.type === 'button' && (
               <div className="flex w-full gap-3 flex-wrap mt-[10px]">
                   {message.options && message.options.map((option:string, idx:number) => (
                     <div key={idx}
@@ -142,18 +142,23 @@ const Chat = () => {
                   ))}
               </div>
             )}
-             {message.type === 'input' && showOptions && (
+             {message.type === 'input' && (
               <div className="flex gap-3 flex-wrap mt-[10px]">
                 <input 
                   type="text"  
                   onChange={handleInputChange}
-                  onKeyDown={(e)=>{handleKeyDown(e,message.reqType)}} 
                   className="top-[50px] text-[20px] bg-[#dfe1ee] w-[30vw] border-none rounded-[5px] px-[10px] py-[5px] border-[0px] focus:outline-none focus:border-none" 
                   placeholder="ここに入力してください..."
                 />
+                 <div
+                      className={`border border-[#c8ceed] px-[20px] py-[10px] rounded-[5px] hover:border-[#0a1551] text-[#6C73A8] hover:bg-[#dadef3] cursor-pointer bg-white1`}
+                    onClick={() => {handleKeyDown(message.reqType)}}
+                  >
+                    <p className="font-normal leading-[28px]  text-[15px] break-all">確認</p>
+                  </div>
               </div>
             )}
-            {message.type === 'selectDate' && showOptions && (
+            {message.type === 'selectDate' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] p-4">
                 <FullCalendar
                   ref={calendarRef}
@@ -181,7 +186,7 @@ const Chat = () => {
 
 
 
-            {message.type === 'select' && showOptions && (
+            {message.type === 'select' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px]">
                 {Array.isArray(message.options) &&
                   message.options.map((option: Option, idx: number) => {
@@ -221,7 +226,7 @@ const Chat = () => {
                 </div>  
               </div>
             )}
-            {message.type === 'reservationView' && showOptions && (
+            {message.type === 'reservationView' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] relative  ">
                 <div 
                   className={clsx(
@@ -262,7 +267,7 @@ const Chat = () => {
                 </div>  
               </div>
             )}
-            {message.type === 'checkReservation' && showOptions && (
+            {message.type === 'updateReservation' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] relative  ">
                 <div 
                   className={clsx(
@@ -276,7 +281,7 @@ const Chat = () => {
                   <p className="font-semibold text-[20px] leading-[25.5px] text-[#091428] opacity-100 relative">
                     予約番号：{message.options.id}
                   </p>
-                  <div className="flex gap-5 relative">
+                  <div className="flex gap-3 relative">                    
                     <div className="flex flex-col items-center justify-center">
                       <div className="flex justify-center items-center">
                         <Image src="/assets/images/auth/logo.png" alt="logo" width={120} height={120}  priority />
@@ -290,7 +295,52 @@ const Chat = () => {
                       <p className="font-normal text-5 leading-[19px] text-[#091428]">{String(message.options.end_time).slice(0,10)}</p>
                       <p className="font-normal text-4 leading-[14px] text-[#858688]">日付</p>
                       <hr />
-                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{String(message.options.start_time).slice(11,16)}</p>
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{(Number(String(message.options.start_time).slice(11,13))+9)<10?""+Number(String(message.options.start_time).slice(11,13))+9+":00":Number(String(message.options.start_time).slice(11,13))+9+":00"}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">時間</p>
+                      <hr />
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{message.options.customer_name}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">氏名</p>
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{message.options.customer_phoneNum}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">TEL</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-6">  
+                  <Button label="はい" onClickHandler={()=>handleButtonClick("はい",message.reqType[0])}/>
+                  <Button label="いいえ" onClickHandler={()=>handleButtonClick("いいえ",message.reqType[0])}/>
+                </div>  
+              </div>
+            )}
+            {message.type === 'checkReservation' && (
+              <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] relative  ">
+                <div 
+                  className={clsx(
+                    "relative w-fit rounded-[10px] border border-black/10 bg-no-repeat mt-8 p-7 overflow-hidden bg-contain bg-center",
+                    message.state === "OK"
+                      ? "bg-[url('/assets/images/check_bg.png')] shadow-[3px_2px_34px_0px_rgba(0,210,0,0.5)]"
+                      : "shadow-[1px_2px_20px_0px_rgba(0,0,0,0.4)]"
+                  )}
+                >
+                <div className="absolute inset-0 bg-white/70"></div>
+                  
+                  <div className="flex gap-5 relative">
+                    <div className="flex flex-col items-center justify-center">
+                      <p className="font-semibold text-[20px] leading-[25.5px] text-[#091428] opacity-100 relative">
+                        予約番号：{message.options.id}
+                      </p>
+                      <div className="flex justify-center items-center">
+                        <Image src="/assets/images/auth/logo.png" alt="logo" width={120} height={120}  priority />
+                        <p className="font-bold text-[100px] text-[#005596] "><span className="text-[#e6494f] text-[90px]">in</span>g</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1 my-[9px]">
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{message.options.customer_address}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">工事場所</p>
+                      <hr />
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{String(message.options.end_time).slice(0,10)}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">日付</p>
+                      <hr />
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{(Number(String(message.options.start_time).slice(11,13))+9)<10?""+Number(String(message.options.start_time).slice(11,13))+9+":00":Number(String(message.options.start_time).slice(11,13))+9+":00"}</p>
                       <p className="font-normal text-4 leading-[14px] text-[#858688]">時間</p>
                       <hr />
                       <p className="font-normal text-5 leading-[19px] text-[#091428]">{message.options.customer_name}</p>
@@ -305,7 +355,7 @@ const Chat = () => {
                 </div>  
               </div>
             )}
-            {message.type === 'viewReservationList' && showOptions && (
+            {message.type === 'viewReservationList' && (
               <div className="p-5 max-w-full overflow-x-auto">
                 <table className="w-full table-auto border border-gray-300">
                   <thead>

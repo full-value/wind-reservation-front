@@ -1,4 +1,4 @@
-export type MessageType = 'text' | 'button' | 'select' | 'input' | 'reservationView' | 'viewReservationList' | 'selectDate' | 'checkReservation';
+export type MessageType = 'text' | 'button' | 'select' | 'input' | 'reservationView' | 'viewReservationList' | 'selectDate' | 'checkReservation' |'updateReservation';
 
 export interface ChatMessage {
   type: MessageType;
@@ -157,7 +157,23 @@ export const chatMessages: { [key: string]: ChatMessage } = {
     state:"OK",
     reqType: ['EndBtn']
   },
-
+  getReservationError:{
+    type: 'button',
+    content:'予約はありません。',
+    options:["戻る"],
+    reqType: ['EndBtn']
+  },
+  updateReservation:{
+    type: 'updateReservation',
+    content:'下記の予約を変更してもよろしいですか？',
+    reqType: ['updateReservation']
+  },
+  updateReservationConfirm:{
+    type: 'button',
+    content:'予約を本当に変更しますか？',
+    options:['はい','いいえ'],
+    reqType: ['updateReservationConfirm']
+  },
 
 
 
