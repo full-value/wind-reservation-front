@@ -22,7 +22,7 @@ interface ChatStore {
     customerPhoneNum:string;
     selectTime:string;
     selectDate:string;
-
+    updateId:number;
 
 
     
@@ -59,6 +59,7 @@ export const useChatStore = create<ChatStore>((set) => ({
     customerPhoneNum:'',
     selectTime:'',
     selectDate:'',
+    updateId:0,
 
 
     roomNum:0,
@@ -98,6 +99,7 @@ export const useChatStore = create<ChatStore>((set) => ({
         customerPhoneNum:'',
         selectTime:'',
         selectDate:'',
+        updateId:0,
 
 
 
