@@ -71,14 +71,14 @@ const Chat = () => {
   }, [messages, typingDelay, resetForm]); 
         
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>,reqType:string) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (reqType:string) => {
+    
      if(inputValue !==""){
       handleInputEnterPress(inputValue,reqType[0]);
       setInputValue('');
      }
       
-    }
+    
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -130,7 +130,7 @@ const Chat = () => {
                 }}
               />
             
-            {message.type === 'button' && showOptions && (
+            {message.type === 'button' && (
               <div className="flex w-full gap-3 flex-wrap mt-[10px]">
                   {message.options && message.options.map((option:string, idx:number) => (
                     <div key={idx}
@@ -142,18 +142,23 @@ const Chat = () => {
                   ))}
               </div>
             )}
-             {message.type === 'input' && showOptions && (
+             {message.type === 'input' && (
               <div className="flex gap-3 flex-wrap mt-[10px]">
                 <input 
                   type="text"  
                   onChange={handleInputChange}
-                  onKeyDown={(e)=>{handleKeyDown(e,message.reqType)}} 
                   className="top-[50px] text-[20px] bg-[#dfe1ee] w-[30vw] border-none rounded-[5px] px-[10px] py-[5px] border-[0px] focus:outline-none focus:border-none" 
                   placeholder="ここに入力してください..."
                 />
+                 <div
+                      className={`border border-[#c8ceed] px-[20px] py-[10px] rounded-[5px] hover:border-[#0a1551] text-[#6C73A8] hover:bg-[#dadef3] cursor-pointer bg-white1`}
+                    onClick={() => {handleKeyDown(message.reqType)}}
+                  >
+                    <p className="font-normal leading-[28px]  text-[15px] break-all">確認</p>
+                  </div>
               </div>
             )}
-            {message.type === 'selectDate' && showOptions && (
+            {message.type === 'selectDate' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] p-4">
                 <FullCalendar
                   ref={calendarRef}
@@ -181,7 +186,7 @@ const Chat = () => {
 
 
 
-            {message.type === 'select' && showOptions && (
+            {message.type === 'select' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px]">
                 {Array.isArray(message.options) &&
                   message.options.map((option: Option, idx: number) => {
@@ -221,7 +226,7 @@ const Chat = () => {
                 </div>  
               </div>
             )}
-            {message.type === 'reservationView' && showOptions && (
+            {message.type === 'reservationView' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] relative  ">
                 <div 
                   className={clsx(
@@ -262,7 +267,7 @@ const Chat = () => {
                 </div>  
               </div>
             )}
-            {message.type === 'checkReservation' && showOptions && (
+            {message.type === 'checkReservation' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] relative  ">
                 <div 
                   className={clsx(
@@ -305,7 +310,7 @@ const Chat = () => {
                 </div>  
               </div>
             )}
-            {message.type === 'viewReservationList' && showOptions && (
+            {message.type === 'viewReservationList' && (
               <div className="p-5 max-w-full overflow-x-auto">
                 <table className="w-full table-auto border border-gray-300">
                   <thead>

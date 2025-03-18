@@ -157,6 +157,12 @@ export const chatMessages: { [key: string]: ChatMessage } = {
     state:"OK",
     reqType: ['EndBtn']
   },
+  getReservationError:{
+    type: 'button',
+    content:'予約はありません。',
+    options:["戻る"],
+    reqType: ['EndBtn']
+  },
 
 
 

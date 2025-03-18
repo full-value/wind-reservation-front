@@ -104,8 +104,6 @@ export const useChatHandler = () => {
         chatMessages.reservationConfirmation.options = Object.values(reservationData);
         addMessage(chatMessages.reservationConfirmation);
       }else if(chatData.requirement === "予約変更"){
-        console.log("111111111111111111111111",{customer_name:chatData.customerName, customer_phone:chatData.customerPhoneNum});
-        
         const res = await fetch('/api/reservation/getReservation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
@@ -116,8 +114,14 @@ export const useChatHandler = () => {
           throw new Error(errorData.message || 'search failed');
         }
         const data = await res.json();
-        chatMessages.bookedReservation.options = data[0];
-        addMessage(chatMessages.bookedReservation);
+        if(data[0].length>0){
+          chatMessages.bookedReservation.options = data[0];
+          addMessage(chatMessages.bookedReservation);
+        }else{
+          addMessage(chatMessages.getReservationError);
+        }
+        
+        
         
       }
         break;
