@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { fetchWithAuth } from '@/utils/fetchUtils';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
+const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
 export async function GET() {
   try {
-    const res = await fetchWithAuth(`${API_BASE_URL}/alert`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/alert`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -21,7 +21,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();    
-    const res = await fetchWithAuth(`${API_BASE_URL}/alert`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/alert`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -40,7 +40,7 @@ export async function PUT(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');   
     const body = await request.json();    
-    const res = await fetchWithAuth(`${API_BASE_URL}/alert/${id}`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/alert/${id}`, {
       method: 'PUT', 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -58,7 +58,7 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    const res = await fetchWithAuth(`${API_BASE_URL}/alert/${id}`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/alert/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     });

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { fetchWithAuth } from '@/utils/fetchUtils';
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000'; 
+const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'; 
 export async function GET() {
   try {  
       
    
-    const res = await fetchWithAuth(`${API_BASE_URL}/alert/getMessages`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/alert/getMessages`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json'},
     });
@@ -24,7 +24,7 @@ export async function PUT(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');   
-    const res = await fetchWithAuth(`${API_BASE_URL}/alert/${id}/read`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/alert/${id}/read`, {
       method: 'PUT', 
       headers: { 'Content-Type': 'application/json' },
     });

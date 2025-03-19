@@ -3,9 +3,9 @@ import { fetchWithAuth } from '@/utils/fetchUtils';
 
 export async function POST(req: Request) {
   try {
-    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api';
+    const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
     const requestBody = await req.json();
-    const res = await fetchWithAuth(`${API_BASE_URL}/flat/deleteFlat`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/flat/deleteFlat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify(requestBody),

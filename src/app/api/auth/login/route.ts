@@ -4,11 +4,11 @@ import { setCookie } from '@/utils/cookieUtils';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';  
+    const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';  
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
 
-    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+    const res = await fetch(`${NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     const response = NextResponse.json(data);
     response.cookies.set('accessToken', data.accessToken, {
       httpOnly: true, // Prevents JavaScript access
-      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+      secure: false, // HTTPS only in production
       sameSite: 'strict', // Protects against CSRF
       maxAge: 60 * 60, // 1 hour
       path: '/' // Accessible across the site

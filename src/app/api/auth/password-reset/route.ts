@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
+    const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
     const body = await req.json();
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
 
-    const res = await fetch(`${API_BASE_URL}/auth/password-reset`, {
+    const res = await fetch(`${NEXT_PUBLIC_API_BASE_URL}/auth/password-reset`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

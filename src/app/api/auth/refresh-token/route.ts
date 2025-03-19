@@ -3,7 +3,7 @@ import { setCookie } from '@/utils/cookieUtils';
 
 export async function POST(req: Request) {
   try {
-    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
+    const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
     // Parse the request body to extract the refreshToken
     const { refreshToken } = await req.json();
 
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
 
     // Send the refreshToken to the backend API for validation and refreshing
-    const response = await fetch(`${API_BASE_URL}/authentication/refresh-token`, {
+    const response = await fetch(`${NEXT_PUBLIC_API_BASE_URL}/authentication/refresh-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken }),

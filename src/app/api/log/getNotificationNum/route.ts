@@ -3,9 +3,9 @@ import { fetchWithAuth } from '@/utils/fetchUtils';
 
 export async function GET() {
   try {  
-    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';   
+    const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';   
   
-    const res = await fetchWithAuth(`${API_BASE_URL}/log/getNotificationNum`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/log/getNotificationNum`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json'},
     });

@@ -3,11 +3,11 @@ import { getCookie, deleteCookie } from '@/utils/cookieUtils';
 import { fetchWithAuth } from '@/utils/fetchUtils';
 
 export async function POST() {
-  const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000';
+  const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
   const refreshToken = await getCookie('refreshToken');
 
   try {
-    const res = await fetchWithAuth(`${API_BASE_URL}/auth/logout`, {
+    const res = await fetchWithAuth(`${NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken }),

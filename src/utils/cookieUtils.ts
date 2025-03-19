@@ -17,7 +17,7 @@ export const setCookie = async (
   const cookieStore = await cookies();
   cookieStore.set(name, value, {
     httpOnly: true, // Prevents client-side JavaScript access
-    secure: process.env.NODE_ENV === 'production', // Only use secure cookies in production (HTTPS)
+    secure: false, // Only use secure cookies in production (HTTPS)
     sameSite: 'lax', // Adjust based on your requirements
     path: '/', // Cookie will be available across the whole site
     ...options, // Allow custom options (like maxAge)
