@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtDecode } from 'jwt-decode';
-import {  } from "module";
+import { getCookie } from '@/utils/cookieUtils';
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.pathname;
-  const accessToken = req.cookies.get('accessToken')?.value;
+  const accessToken = await  getCookie('accessToken');
+  
   
   // Get role from JWT token if it exists
   let userRole = null;
@@ -38,7 +39,7 @@ export async function middleware(req: NextRequest) {
     }
     // For member role, restrict access to only allowed dashboard pages
     if (userRole === 'member') {
-      const allowedPaths = ['/dashboard','/dashboard/calendar', '/dashboard/flat', '/dashboard/work','/dashboard/message'];
+      const allowedPaths = ['/dashboard/','/dashboard/calendar', '/dashboard/flat', '/dashboard/work','/dashboard/message'];
       if (!allowedPaths.some(path => url === path)) {
         return NextResponse.redirect(new URL('/dashboard', req.url));
       }
