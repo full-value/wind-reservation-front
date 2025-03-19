@@ -5,7 +5,7 @@ import { getCookie } from '@/utils/cookieUtils';
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.pathname;
-  const accessToken = getCookie('accessToken');
+  const accessToken = await  getCookie('accessToken');
   
   
   // Get role from JWT token if it exists
