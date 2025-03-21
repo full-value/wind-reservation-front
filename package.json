@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "concurrently \"next start\"  \"cd ../wind-reservation-back && npm run start\"",
     "lint": "next lint"
   },
   "dependencies": {
