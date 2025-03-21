@@ -21,9 +21,10 @@ export const useDashboard = () => {
         headers: { 'Content-Type': 'application/json' }, 
         ...options 
       });
-      
+
       if (!res.ok) {
-        await handleFetchError(res);
+        // const errorText = await res.text(); // Read error message from response
+        // throw new Error(`HTTP Error ${res.status}: ${errorText || res.statusText}`);
       }
 
       return await res.json();
@@ -35,6 +36,7 @@ export const useDashboard = () => {
       setLoading(false);
     }
   };
+
 
   // Get Flat Data
   const getFlatData = async () => fetchData('/api/flat/getAllData');
@@ -211,6 +213,38 @@ export const useDashboard = () => {
       throw error;
     }
   };
+    // Get All Alerts (with read status)
+    const getChatData = async () => {
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch all alerts');
+        }        
+        return await response.json();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Error fetching all alerts';
+        console.error(errorMessage);
+        throw error;
+      }
+    };
+    const createChat = async (body: any) => fetchData('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    const updateChat = async (id: number, body: any) => fetchData(`/api/chat?id=${id}`, {
+      method: 'PUT', 
+      body: JSON.stringify(body),
+    });
+    const deleteChat = async (id: number) => fetchData(`/api/chat?id=${id}`, {
+      method: 'DELETE',
+    });
+  
 
   return {
     getFlatData,
@@ -245,6 +279,13 @@ export const useDashboard = () => {
     getAllAlerts,
     useGetUserRole,
     getMessages,
-    getMemberData
+    getMemberData,
+
+
+    getChatData,
+    createChat,
+    updateChat,
+    deleteChat
+
   };
 };

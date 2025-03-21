@@ -133,6 +133,18 @@ const Sidebar = () => {
               </span>
             </Link>
           </li>
+          <li
+            key={`${path}-company4`}
+            className={`w-full text-white mt-0 ${pathname === "/dashboard/company/chat" ? 'bg-[#1e293a] text-white' : ''} 
+              ${isMobile ? 'flex justify-center' : ''} p-3 hover:bg-[#1e293a] text-red-500 transition-all duration-100`}
+            style={{ marginTop: "0px" }}
+          >
+            <Link href="/dashboard/company/chat" className="flex">
+            <span className={`text-[15px] ${isSubActive && "m-0"} ${(isSidebarOpen || isMobile) ? "ml-9" : "ml-3"}`}>
+                {(isSidebarOpen || isMobile) ? "チャットフロー管理" : "チャ"}
+              </span>
+            </Link>
+          </li>
         </>  
       )}
       {path === "/dashboard/member" && pathname.startsWith("/dashboard/member") && (
