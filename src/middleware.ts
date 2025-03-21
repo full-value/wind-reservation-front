@@ -20,11 +20,7 @@ export async function middleware(req: NextRequest) {
 
   // Redirect root `/` to appropriate page based on role
   if (url === '/') {
-    if (!accessToken) {
-      return NextResponse.redirect(new URL('/auth/login', req.url));
-    } else {
       return NextResponse.redirect(new URL('/chat', req.url));
-    } 
   }
 
   // Handle dashboard access
