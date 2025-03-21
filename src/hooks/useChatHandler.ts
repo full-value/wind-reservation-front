@@ -46,10 +46,11 @@ export const useChatHandler = () => {
   }, []);
 
   const handleButtonClick = (value: string, reqType: string) => {
-    if (reqType === "select_requirement") {
-      setChatHistory([]);
-      
+    
+    if (reqType === "select_requirement" || value === "予約変更") {
+      setChatHistory([]);      
     }
+
     
     if (value === "welcomeAgain") {
       addMessage(flowMap["welcomeAgain"]);
