@@ -105,8 +105,8 @@ const Notification = () => {
           <div className="mb-4 relative">
             <input
               type="text"
-              placeholder="検索通知内容..."
-              className="w-full px-4 py-2bg-[#1b2635] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="検索通知..."
+              className="w-full px-4 py-2 bg-[#667486] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
               onChange={handleSearch}
             />

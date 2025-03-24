@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\"  \"cd ../wind-reservation-back && npm run dev\"",
     "build": "next build",
-    "start": "concurrently \"next start\"  \"cd ../wind-reservation-back && npm run start\"",
+    "start": "concurrently \"next start -p 3001\"  \"cd ../wind-reservation-back && npm run start\"",
     "lint": "next lint"
   },
   "dependencies": {

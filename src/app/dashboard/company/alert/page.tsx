@@ -157,7 +157,7 @@ const AlertManagementPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col bg-[#1b2635]">      
+      <div className="flex flex-col h-min-screen bg-[#1b2635]">      
         <div className="bg-[#1b2635] p-8">   
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-white mb-8">通知管理</h1>

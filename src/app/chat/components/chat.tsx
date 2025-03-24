@@ -62,7 +62,6 @@ const Chat = () => {
         
 
   const handleKeyDown = (reqType:string) => {
-    console.log(reqType)
      if(inputValue !==""){
       handleInputEnterPress(inputValue,reqType);
       setInputValue('');
@@ -127,12 +126,11 @@ const Chat = () => {
           date: formattedDate, // Changed `start` to `date`
         };
       });
-      
       setChangedData(dataValues);
     }
   };
   return (
-    <div className="flex flex-col w-full gap-[10px]" style={{ maxHeight: '800px', overflowY: 'scroll' }}>
+    <div className="flex flex-col w-full gap-[10px] pr-5">
       {messages.map((message, index) => (
         <div key={index} className={`flex gap-2 mt-3 ${messages.length !== 1 && messages.length!== index+1 && "pointer-events-none"}`}>
           <Image
@@ -143,24 +141,24 @@ const Chat = () => {
             className="flex w-[80px] h-[80px] rounded-full border-2 border-[#83d0e4] select-none"
           />
           <div className="flex flex-col flex-wrap w-full relative font-normal leading-[28px] text-[#6C73A8] text-[17px] break-all select-none">
-              <Typewriter
-                options={{
-                  strings: message.content,
-                  autoStart: true,
-                  loop: false,
-                  deleteSpeed: 0,
-                  delay: 20, // Adjusted delay for a better effect
-                }}
-              />
+            <Typewriter
+              options={{
+                strings: message.content,
+                autoStart: true,
+                loop: false,
+                deleteSpeed: 0,
+                delay: 20, // Adjusted delay for a better effect
+              }}
+            />
             
             {message.type === 'button' && (
-              <div className="flex w-full gap-3 flex-wrap mt-[10px]">
+              <div className="flex flex-col sm:flex-row w-fit gap-3 flex-wrap mt-[10px]">
                   {message.options && message.options.map((option:{ label: string; nextKey: string }, idx:number) => (
                     <div key={idx}
-                      className={`border border-[#c8ceed] px-[20px] py-[10px] rounded-[5px] hover:border-[#0a1551] text-[#6C73A8] hover:bg-[#dadef3] cursor-pointer ${selectedOptions.has(option["label"]+index)   ? "bg-[#0f1430] text-white" : "bg-white"}`}
+                      className={`felx justify-center items-center border border-[#c8ceed] px-[20px] py-[10px] rounded-[5px] hover:border-[#0a1551] text-[#6C73A8] hover:bg-[#dadef3] cursor-pointer ${selectedOptions.has(option["label"]+index)   ? "bg-[#0f1430] text-white" : "bg-white"}`}
                       onClick={() => {handleOptionClick(option["label"],option["nextKey"],index);}}
                     >
-                      <p className="font-normal leading-[28px]  text-[15px] break-all">{option["label"]}</p>
+                      <p className="font-normal leading-[28px]  text-[15px] break-all text-center">{option["label"]}</p>
                     </div>
                   ))}
                   {index+1 === messages.length && messages.length !== 1 && 
@@ -168,7 +166,7 @@ const Chat = () => {
                         className={`border border-[#f88888] ml-10 px-[20px] py-[10px] rounded-[5px] hover:border-[#ff4141] text-[#ff3333] hover:bg-[#ffeaea] cursor-pointer bg-white1`}
                       onClick={() => backBtn()}
                     >
-                      <p className="font-normal leading-[28px]  text-[15px] break-all">戻る</p>
+                      <p className="font-normal leading-[28px]  text-[15px] break-all text-center">戻る</p>
                     </div>
                  }
               </div>
@@ -178,105 +176,103 @@ const Chat = () => {
                 <input 
                   type="text"  
                   onChange={handleInputChange}
-                  className="top-[50px] text-[20px] bg-[#dfe1ee] w-[30vw] border-none rounded-[5px] px-[10px] py-[5px] border-[0px] focus:outline-none focus:border-none" 
+                  className="top-[50px] text-[20px] bg-[#dfe1ee] w-[70vw] sm:w-[30vw] border-none rounded-[5px] px-[10px] py-[5px] border-[0px] focus:outline-none focus:border-none" 
                   placeholder="ここに入力してください..."
                 />
                  <div
                       className={`border border-[#c8ceed] px-[20px] py-[10px] rounded-[5px] hover:border-[#0a1551] text-[#6C73A8] hover:bg-[#dadef3] cursor-pointer bg-white1`}
                     onClick={() => {handleKeyDown(message.options[0])}}
                   >
-                    <p className="font-normal leading-[28px]  text-[15px] break-all">確認</p>
+                    <p className="font-normal leading-[28px]  text-[15px] break-all text-center">確認</p>
                   </div>
                   {index+1 === messages.length && messages.length !== 1 && 
                     <div
                         className={`border border-[#f88888] ml-1 px-[20px] py-[10px] rounded-[5px] hover:border-[#ff4c4c] text-[#ff3333] hover:bg-[#f7dbdb] cursor-pointer bg-white1`}
                       onClick={() => backBtn()}
                     >
-                      <p className="font-normal leading-[28px]  text-[15px] break-all">戻る</p>
+                      <p className="font-normal leading-[28px]  text-[15px] break-all text-center">戻る</p>
                     </div>
                  }
               </div>
             )}
             {message.type === 'selectDate' && (
-              <div className="grid grid-cols-2 w-full h-[550px] p-5 mb-8">
-              {/* Left Side: Calendar */}
-              <div className="p-5 h-[500px]">
-                <FullCalendar
-                  ref={calendarRef}
-                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                  initialView="dayGridMonth"
-                  locale={jaLocale}
-                  headerToolbar={{
-                    left: "", // Default buttons
-                    center: "title", // Calendar title
-                    right: "today,prev,next", // Custom button
-                  }}
-                  datesSet={(arg) => {
-                    const year = arg.start.getFullYear();
-                    const month = arg.start.getMonth()+2;
-                    const firstDay = `${year}-${month.toString().padStart(2, '0')}-01`;
-                    const lastDate = new Date(year, month, 0).getDate();
-                    const lastDay = `${year}-${month.toString().padStart(2, '0')}-${lastDate.toString().padStart(2, '0')}`;
-                    handleDatesSet(firstDay, lastDay);
-                  }}
-                  eventContent={(arg) => (
-                    <div className="truncate-event h-7" title={arg.event.title}>
-                      {arg.event.title}
-                    </div>
-                  )}
-                  events={changedData} 
-                  height="600px"
-                  dateClick={(info) => handleDateClick(info)}
-                />       
-              </div>
-            
-              {/* Right Side: Content */}
-              <div className=" h-[610px] flex flex-col items-center border p-2">
-                <TextField 
-                  type="date"
-                  
-                  // value={selectedEvent.reservation_time || "01/01/2001"}
-                  onChange={(e) =>{
-                    setSelectedDate(e.target.value);    
-                    setIsModalOpen(true);
-                  }}
-                  variant="outlined" 
-                  className="w-[50%] p-2 border border-gray-300 rounded "
-                />   
-                <div className="w-full h-[520px] overflow-y-scroll border border-gray-300 mt-2">
-                  <table className="w-full text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 w-full h-[550px] p-5 mb-8  flex-col">
+                {/* Left Side: Calendar */}
+                <div className="hidden sm:block p-5 h-[500px]">
+                  <FullCalendar
+                    ref={calendarRef}
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    locale={jaLocale}
+                    headerToolbar={{
+                      left: "", // Default buttons
+                      center: "title", // Calendar title
+                      right: "today,prev,next", // Custom button
+                    }}
+                    datesSet={(arg) => {
+                      const year = arg.start.getFullYear();
+                      const month = arg.start.getMonth()+2;
+                      const firstDay = `${year}-${month.toString().padStart(2, '0')}-01`;
+                      const lastDate = new Date(year, month, 0).getDate();
+                      const lastDay = `${year}-${month.toString().padStart(2, '0')}-${lastDate.toString().padStart(2, '0')}`;
+                      handleDatesSet(firstDay, lastDay);
+                    }}
+                    eventContent={(arg) => (
+                      <div className="truncate-event h-7" title={arg.event.title}>
+                        {arg.event.title}
+                      </div>
+                    )}
+                    events={changedData} 
+                    height="600px"
+                    dateClick={(info) => handleDateClick(info)}
+                  />       
+                </div>
+              
+                {/* Right Side: Content */}
+                <div className=" h-[610px] w-full flex flex-col items-center border p-2 ">
+                  <TextField 
+                    type="date"
+                    // value={selectedEvent.reservation_time || "01/01/2001"}
+                    onChange={(e) =>{
+                      setSelectedDate(e.target.value);    
+                      setIsModalOpen(true);
+                    }}
+                    variant="outlined" 
+                    className="w-[70%] sm:w-[50%] p-2 border border-gray-300 rounded "
+                  />   
+                 <div className="w-full h-[520px] sm:h-[350px] overflow-y-auto overflow-x-auto border border-gray-300 mt-2">
+                  <table className="w-full min-w-[600px] text-center text-sm sm:text-xs">
                     <thead>
                       <tr className="bg-gray-100">
                         {["番号", "住所", "日付"].map((day, index) => (
-                          <th key={index} className="p-2 text-blue-600 border">{day}</th>
+                          <th key={index} className="p-2 sm:p-1 text-blue-600 border">{day}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {changedData.map((data, rowIndex) => (
-                        <tr key={rowIndex}>
-                          <td className="p-3 border">{rowIndex + 1}</td>
-                          <td className="p-3 border">{data.address}</td>
-                          <td className="p-3 border">{data.date}</td>
+                        <tr key={rowIndex} className="hover:bg-gray-100">
+                          <td className="p-3 sm:p-1 border">{rowIndex + 1}</td>
+                          <td className="p-3 sm:p-1 border">{data.address}</td>
+                          <td className="p-3 sm:p-1 border">{data.date}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                
 
-              </div>
-              {index+1 === messages.length && messages.length !== 1 && 
-                <div
-                    className={`border mt-5 w-fit border-[#f88888] ml-1 px-[20px] py-[10px] rounded-[5px] hover:border-[#ff4c4c] text-[#ff3333] hover:bg-[#f7dbdb] cursor-pointer bg-white1`}
-                  onClick={() => backBtn()}
-                >
-                  <p className="font-normal leading-[28px]  text-[15px] break-all">戻る</p>
+                  
+
                 </div>
-              }
-              
-            </div>
-            
+                {index+1 === messages.length && messages.length !== 1 && 
+                  <div
+                      className={`border mt-5 w-fit border-[#f88888] px-[20px] py-[10px] rounded-[5px] hover:border-[#ff4c4c] text-[#ff3333] hover:bg-[#f7dbdb] cursor-pointer bg-white1`}
+                    onClick={() => backBtn()}
+                  >
+                    <p className="font-normal leading-[28px]  text-[15px] break-all text-center">戻る</p>
+                  </div>
+                }
+              </div>
             )}
             {message.type === 'reservationView' && (
               <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] relative  ">
@@ -288,7 +284,7 @@ const Chat = () => {
                       : "shadow-[1px_2px_20px_0px_rgba(0,0,0,0.4)]"
                   )}
                 >
-                <div className="absolute inset-0 bg-white/70"></div>
+                <div className="hidden sm:block absolute inset-0 bg-white/70"></div>
                   <div className="flex gap-5 relative">
                     <div className="flex flex-col items-center justify-center">
                       <div className="flex justify-center items-center">
@@ -333,7 +329,7 @@ const Chat = () => {
                   <p className="font-semibold text-[20px] leading-[25.5px] text-[#091428] opacity-100 relative">
                     予約番号：{message.options.id}
                   </p>
-                  <div className="flex gap-3 relative">                    
+                  <div className=" hidden sm:block  gap-3 relative">                    
                     <div className="flex flex-col items-center justify-center">
                       <div className="flex justify-center items-center">
                         <Image src="/assets/images/auth/logo.png" alt="logo" width={120} height={120}  priority />
@@ -385,7 +381,7 @@ const Chat = () => {
                         )
                       }
                       
-                      <div className="flex justify-center items-center">
+                      <div className="hidden sm:flex justify-center items-center w-[270px]">
                         <Image src="/assets/images/auth/logo.png" alt="logo" width={120} height={120}  priority />
                         <p className="font-bold text-[100px] text-[#005596] "><span className="text-[#e6494f] text-[90px]">in</span>g</p>
                       </div>
@@ -422,6 +418,64 @@ const Chat = () => {
                 </div>  
               </div>
             )}
+            {message.type === 'confirmReservation' && (
+              <div className="flex flex-col w-full gap-3 flex-wrap mt-[10px] relative  ">
+                <div 
+                  className={clsx(
+                    "relative w-fit rounded-[10px] border border-black/10 bg-no-repeat mt-8 p-7 overflow-hidden bg-contain bg-center",
+                    message.state === "OK"
+                      ? "bg-[url('/assets/images/check_bg.png')] shadow-[3px_2px_34px_0px_rgba(0,210,0,0.5)]"
+                      : "shadow-[1px_2px_20px_0px_rgba(0,0,0,0.4)]"
+                  )}
+                >
+                <div className="absolute inset-0 bg-amber-100 sm:bg-white/70"></div>
+                  
+                  <div className="flex gap-5 relative">
+                    <div className="flex flex-col items-center justify-center">
+                      {
+                        message.state === "OK" &&(
+                          <p className="font-semibold text-[20px] leading-[25.5px] text-[#091428] opacity-100 relative">
+                            予約番号：{message.options.id}
+                          </p>
+                        )
+                      }
+                      
+                      <div className="hidden sm:flex justify-center items-center">
+                        <Image src="/assets/images/auth/logo.png" alt="logo" width={120} height={120}  priority />
+                        <p className="font-bold text-[100px] text-[#005596] "><span className="text-[#e6494f] text-[90px]">in</span>g</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1 my-[9px]">
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{message.options.customer_address}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">工事場所</p>
+                      <hr />
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{String(message.options.start_time).slice(0,10)}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">日付</p>
+                      <hr />
+                      {/* <p className="font-normal text-5 leading-[19px] text-[#091428]">{(Number(String(message.options.start_time).slice(11,13))+9)<10?""+Number(String(message.options.start_time).slice(11,13))+9+":00":Number(String(message.options.start_time).slice(11,13))+9+":00"}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">時間</p>
+                      <hr /> */}
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{message.options.customer_name}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">氏名</p>
+                      <p className="font-normal text-5 leading-[19px] text-[#091428]">{message.options.customer_phoneNum}</p>
+                      <p className="font-normal text-4 leading-[14px] text-[#858688]">TEL</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-6"> 
+                {
+                  message.state !== "OK" ? (
+                    <>
+                       <Button label="戻る" onClickHandler={()=>handleButtonClick("welcomeAgain","戻る")}/>
+                    </>
+                  ):(
+                    <Button label="戻る" onClickHandler={()=>handleButtonClick("welcomeAgain","戻る")}/>
+                    
+                  )
+                }
+                </div>  
+              </div>
+            )}
             {message.type === 'viewReservationList' && (
               <div className="p-5 max-w-full overflow-x-auto">
                 <table className="w-full table-auto border border-gray-300">
@@ -437,27 +491,26 @@ const Chat = () => {
                   </thead>
                   <tbody>
                   {
-                  
-                  message.options.map((option: Option, idx: number) => {
-                    return (
-                      <tr key={idx} className="hover:bg-gray-100 even:bg-gray-50 odd:bg-white">
-                        <td className="px-4 py-3 border-b border-gray-300">{option.id}</td>
-                        <td className="px-4 py-3 border-b border-gray-300">{option.flat_name}</td>
-                        <td className="px-4 py-3 border-b border-gray-300">{option.room_num}</td>
-                        <td className="px-4 py-3 border-b border-gray-300">{option.work_name}</td>
-                        <td className="px-4 py-3 border-b border-gray-300">{option.reservation_time}</td>
-                        <td className="px-4 py-3 border-b border-gray-300">{option.division}</td>
-                      </tr>
-                    );
-                  })}
+                    message.options.map((option: Option, idx: number) => {
+                      return (
+                        <tr key={idx} className="hover:bg-gray-100 even:bg-gray-50 odd:bg-white">
+                          <td className="px-4 py-3 border-b border-gray-300">{option.id}</td>
+                          <td className="px-4 py-3 border-b border-gray-300">{option.flat_name}</td>
+                          <td className="px-4 py-3 border-b border-gray-300">{option.room_num}</td>
+                          <td className="px-4 py-3 border-b border-gray-300">{option.work_name}</td>
+                          <td className="px-4 py-3 border-b border-gray-300">{option.reservation_time}</td>
+                          <td className="px-4 py-3 border-b border-gray-300">{option.division}</td>
+                        </tr>
+                      );
+                    })
+                  }
                   </tbody>
                 </table>
-                <div className="flex gap-6 mt-5 justify-end">  
+                <div className="flex gap-6 mt-5 justify-end items-end">  
                   <Button  label='戻る' onClickHandler={()=>handleButtonClick("戻る",'')}/>
                 </div>
               </div>
             )}
-          
             <div ref={messageEndRef} className="mt-[50px]"></div>
           </div>
         </div>

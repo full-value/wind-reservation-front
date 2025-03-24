@@ -7,6 +7,8 @@ import { useAuthStore } from '@/state/authStore';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import CollapseIcon from '@public/assets/icons/collapse.svg';
+import { useRouter } from 'next/navigation';
+
 import DashboardIcon from '@public/assets/icons/dashboard.svg';
 
 import LogoutIcon from '@public/assets/icons/logout.svg';
@@ -27,9 +29,10 @@ import MemberIcon from '@public/assets/icons/member.svg';
 
 const Sidebar = () => {
   const pathname = usePathname();
+    const router = useRouter();
   
   const { mutate: logout } = useLogout();
-  const { isSidebarOpen, toggleSidebar } = useAlbumStore();
+  const { isSidebarOpen, toggleSidebar, } = useAlbumStore();
   const [isListsCollapsed, setIsListsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { NotificationNum } = useNotificationData();
@@ -39,7 +42,17 @@ const Sidebar = () => {
   const handleCollapseClick = () => {
     isMobile ? setIsListsCollapsed(!isListsCollapsed) : toggleSidebar();
   };
+ const linkOnclick = (e:React.MouseEvent,path:string)=>{
+  e.preventDefault();
+  console.log( path );
+  
 
+  if (window.screen.width < 500 && !(path === "/dashboard/company" || path === "/dashboard/member")) {
+    toggleSidebar();
+}
+
+  router.push(path);
+ }
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     await logout();
@@ -49,20 +62,10 @@ const Sidebar = () => {
   const menuItems = [
     { path: '/dashboard/company', Icon: BuildingIcon, label: '工事会社管理', authority: ['manager'] },
     { path: '/dashboard/member', Icon: MemberIcon, label: '工事職員管理', authority: ['manager'] },
-    // { path: '/dashboard', Icon: DashboardIcon, label: 'ダッシュボード', authority: ['manager', 'member', 'user'] },
     { path: '/dashboard/calendar', Icon: CalendarIcon, label: 'カレンダー', authority: ['manager,member'] },
-    // { path: '/dashboard/flat', Icon: BuildingIcon, label: '物件一覧', authority: ['manager', "member"] },
-    // { path: '/dashboard/work', Icon: AgendarIcon, label: '案件一覧', authority: ['manager', 'member'] },
     { path: '/dashboard/user', Icon: UserIcon, label: 'ユーザー管理', authority: ['manager'] },
-    // { path: '/dashboard/history', Icon: HistoryIcon, label: '変更履歴', authority: ['manager'] },
     { path: '/dashboard/api_history', Icon: ApiIcon, label: 'APIログ', authority: ['manager'] },
-    // { path: '/dashboard/error_log', Icon: ErrorIcon, label: 'エラーログ', authority: ['manager'] },
-    // { path: '/dashboard/file', Icon: FileIcon, label: 'ファイル', authority: ['manager'] },
     { path: '/dashboard/alert', Icon: AlertIcon, label: '警告', authority: ['manager'] },
-   
-    
-
-    // { path: '/dashboard/message', Icon: MessageIcon, label: 'メッセージ', authority: ['manager', "member","user"] },
   ];
 
   const renderMenuItem = (path: string, Icon: any, label: string, authority: string[]) => {
@@ -78,8 +81,9 @@ const Sidebar = () => {
         className={`w-full text-white mt-0 ${isActive ? 'bg-[#1e293a] text-white' : ''} 
           ${isMobile ? 'flex justify-center' : ''} p-3 hover:bg-[#1e293a] text-red-500 transition-all duration-100`}
         style={{ marginTop: "0px" }}
+        onClick={(e)=>linkOnclick(e,path)}
       >
-        <Link href={path} className={`flex items-center ${!(isSidebarOpen || isMobile) && "justify-center"}`}>
+        <div  className={`flex items-center ${(!isSidebarOpen || isMobile) && "justify-center"}`}>
           <div className='flex items-center justify-between relative'>
             <Icon className="w-[20px] h-[20px] text-[#3d4859]" />
             {(isSidebarOpen || isMobile) && <span className={`ml-4 text-[15px] ${isActive && "m-0"}`}>{label}</span>}
@@ -91,59 +95,50 @@ const Sidebar = () => {
                 />        
             )}          
           </div>   
-        </Link> 
+        </div> 
       </li>
 
       {/* Nested Menu Item for Work Time */}
       {path === "/dashboard/company" && pathname.startsWith("/dashboard/company") && (
         <>
           <li
-            key={`${path}-company1`}
-            className={`w-full text-white mt-0 ${pathname === "/dashboard/company/work-time" ? 'bg-[#1e293a] text-white' : ''} 
-              ${isMobile ? 'flex justify-center' : ''} p-3 hover:bg-[#1e293a] text-red-500 transition-all duration-100`}
-            style={{ marginTop: "0px" }} // Removed !important
-          >
-            <Link href="/dashboard/company/work-time" className="flex items-center">
-            <span className={`text-[15px] ${isSubActive && "m-0"} ${(isSidebarOpen || isMobile) ? "ml-9" : "ml-3"}`}>
-                {(isSidebarOpen || isMobile) ? "標準所要時間" : "時間"}
-              </span>
-            </Link>
-          </li>
-          <li
             key={`${path}-company2`}
             className={`w-full text-white mt-0 ${pathname === "/dashboard/company/alert" ? 'bg-[#1e293a] text-white' : ''} 
               ${isMobile ? 'flex justify-center' : ''} p-3 hover:bg-[#1e293a] text-red-500 transition-all duration-100`}
-            style={{ marginTop: "0px" }} // Removed !important
+            style={{ marginTop: "0px" }}
+            onClick={(e)=>linkOnclick(e,"/dashboard/company/alert")}
+            
           >
-            <Link href="/dashboard/company/alert" className="flex items-center">
+            <div  className="flex items-center">
               <span className={`text-[15px] ${isSubActive && "m-0"} ${(isSidebarOpen || isMobile) ? "ml-9" : "ml-3"}`}>
                 {(isSidebarOpen || isMobile) ? "通知管理" : "通知"}
               </span>
-            </Link>
+            </div>
           </li>
           <li
             key={`${path}-company3`}
             className={`w-full text-white mt-0 ${pathname === "/dashboard/company/reservation-history" ? 'bg-[#1e293a] text-white' : ''} 
               ${isMobile ? 'flex justify-center' : ''} p-3 hover:bg-[#1e293a] text-red-500 transition-all duration-100`}
-            style={{ marginTop: "0px" }} // Removed !important
+            style={{ marginTop: "0px" }}
+            onClick={(e)=>linkOnclick(e,"/dashboard/company/reservation-history")}
           >
-            <Link href="/dashboard/company/reservation-history" className="flex">
+            <div className="flex">
             <span className={`text-[15px] ${isSubActive && "m-0"} ${(isSidebarOpen || isMobile) ? "ml-9" : "ml-3"}`}>
                 {(isSidebarOpen || isMobile) ? "過去予約履歴" : "履歴"}
               </span>
-            </Link>
+            </div>
           </li>
           <li
             key={`${path}-company4`}
             className={`w-full text-white mt-0 ${pathname === "/dashboard/company/chat" ? 'bg-[#1e293a] text-white' : ''} 
               ${isMobile ? 'flex justify-center' : ''} p-3 hover:bg-[#1e293a] text-red-500 transition-all duration-100`}
             style={{ marginTop: "0px" }}
-          >
-            <Link href="/dashboard/company/chat" className="flex">
+            onClick={(e)=>linkOnclick(e,"/dashboard/company/chat")}          >
+            <div className="flex">
             <span className={`text-[15px] ${isSubActive && "m-0"} ${(isSidebarOpen || isMobile) ? "ml-9" : "ml-3"}`}>
                 {(isSidebarOpen || isMobile) ? "チャットフロー管理" : "チャ"}
               </span>
-            </Link>
+            </div>
           </li>
         </>  
       )}
@@ -153,25 +148,27 @@ const Sidebar = () => {
             key={`${path}-company1`}
             className={`w-full text-white mt-0 ${pathname === "/dashboard/member/view" ? 'bg-[#1e293a] text-white' : ''} 
               ${isMobile ? 'flex justify-center' : ''} p-3 hover:bg-[#1e293a] text-red-500 transition-all duration-100`}
-            style={{ marginTop: "0px" }} // Removed !important
+            style={{ marginTop: "0px" }}
+            onClick={(e)=>linkOnclick(e,"/dashboard/member/view")}
           >
-            <Link href="/dashboard/member/view" className="flex items-center">
+            <div className="flex items-center">
             <span className={`text-[15px] ${isSubActive && "m-0"} ${(isSidebarOpen || isMobile) ? "ml-9" : "ml-3"}`}>
                 {(isSidebarOpen || isMobile) ? "工事職員ー覧" : "職員"}
               </span>
-            </Link>
+            </div>
           </li>
           <li
             key={`${path}-company2`}
             className={`w-full text-white mt-0 ${pathname === "/dashboard/member/schedule" ? 'bg-[#1e293a] text-white' : ''} 
               ${isMobile ? 'flex justify-center' : ''} p-3 hover:bg-[#1e293a] text-red-500 transition-all duration-100`}
-            style={{ marginTop: "0px" }} // Removed !important
+            style={{ marginTop: "0px" }}
+            onClick={(e)=>linkOnclick(e,"/dashboard/member/schedule")}
           >
-            <Link href="/dashboard/member/schedule" className="flex items-center">
+            <div className="flex items-center">
               <span className={`text-[15px] ${isSubActive && "m-0"} ${(isSidebarOpen || isMobile) ? "ml-9" : "ml-3"}`}>
                 {(isSidebarOpen || isMobile) ? "工事職員日程閲覧" : "日程"}
               </span>
-            </Link>
+            </div>
           </li>
         </>  
       )}
@@ -182,31 +179,36 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`sticky top-0 z-30 bg-[#233044] transition-all min-h-screen duration-100 
+      className={`sticky top-0 z-30 bg-[#233044] transition-all sm:min-h-screen duration-100 
         ${isSidebarOpen ? 'w-full md:w-64' : 'w-full md:w-20'} 
-        ${!isMobile ? 'fixed ' : 'mb-2'}`}
+        ${!isMobile ? 'fixed ' : ''}`}
     >
       <div className="">
-        <div className={`flex justify-between items-center px-3 ${isMobile ? ' mb-5' : 'mt-3 mb-10' } }`}>
-          <div className="flex items-center ">
-            {isSidebarOpen ? (
+        <div className={`flex justify-between items-center px-3 ${isMobile ? ' mb-10' : 'mt-3 sm:mb-14'} ${(isMobile && isListsCollapsed) &&'hidden'} }`}>
+          <div className="flex items-center">
+            {(isSidebarOpen && !isMobile) || (isMobile)? (
               <div className="flex justify-center items-center">
                 <Image src="/assets/images/auth/dash_logo.png" alt="logo" width={60} height={60} style={{ width: "auto", height: "auto" }}  priority />
-                <p className="font-bold text-[60px] text-[#FFFFFF]"><span className="text-[#e6494f] text-[60px]">in</span>g</p>
+                <p className={`font-bold text-[60px] text-[#FFFFFF] }`}><span className="text-[#e6494f] text-[60px]">in</span>g</p>
               </div>
             ):(
-              <Image src="/assets/images/auth/dash_logo.png" alt="logo" width={60} height={60} priority />
+              <Image 
+                src="/assets/images/auth/dash_logo.png" 
+                alt="logo" 
+                width={60} height={60} 
+                className={`h-[40px] transition-all duration-100 ${isSidebarOpen ? 'mr-[12px]' : 'mr-0'}`}
+                priority />
             )}
           </div>
-          <div className={`${(!isSidebarOpen && !isMobile) && 'absolute top-[65px] left-[27px]'}`}>
+          <div className={`${(!isSidebarOpen && !isMobile) && 'sm:absolute sm:top-[65px] sm:left-[27px]'}`}>
             <button className="" onClick={handleCollapseClick}>
               <CollapseIcon className="w-7 h-7 mb-3" />
             </button>
           </div>
         </div>
         <ul
-          className={`space-y-2 ${
-            !isListsCollapsed ? 'hidden' : 'block'
+          className={`space-y-2 w-full ${
+              (isSidebarOpen ) ? ' block pt-2' : 'sm:absolute sm:top-[130px] hidden'
           } md:block md:space-y-4 transition-all duration-100`}
         >     
           {menuItems.map((item) =>
@@ -215,7 +217,6 @@ const Sidebar = () => {
           </div> 
             
           )}
-          
           <li className={`flex rounded-lg p-3 hover:bg-[#1e293a] text-white transition-all duration-100 ${!(isSidebarOpen || isMobile) && "justify-center"}`} onClick={handleLogout}>
             <Link href="" className="flex items-center">
               <LogoutIcon className="w-[25px] text-[#3d4859] h-[20px]" />

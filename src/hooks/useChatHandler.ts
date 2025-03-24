@@ -47,10 +47,9 @@ export const useChatHandler = () => {
 
   const handleButtonClick = (value: string, reqType: string) => {
     
-    if (reqType === "select_requirement" || value === "予約変更") {
+    if (reqType === "select_requirement" || value === "予約変更" ||  value === "予約照会") {
       setChatHistory([]);      
     }
-
     
     if (value === "welcomeAgain") {
       addMessage(flowMap["welcomeAgain"]);
@@ -79,14 +78,69 @@ export const useChatHandler = () => {
     
   };
 
-  const handleInputEnterPress = async (value: string, reqType: string) => {   
-    const current = messages[messages.length - 1];    
-    if (reqType && flowMap[reqType]) {
-      setChatHistory((prevHistory) => [...prevHistory, { key: current.content, value }]);
-      addMessage(flowMap[reqType]);
-    }else{
-      addMessage({ type: 'button', content: 'それについてはよくわかりません。申し訳ありません。' });
-    }    
+  const handleInputEnterPress = async (value: string, reqType: string) => {  
+    const requirement = chatHistory.find(item => item.key === "私たちのサイトにお越しいただきありがとうございます。")?.value||chatHistory.find(item => item.key === "私はどのようにもっとお手伝いできますか？")?.value;
+console.log(reqType,value,requirement);
+
+    if (reqType.trim() === "selectDate" && requirement === "予約照会") { 
+      const customer_name = chatHistory.find(item => item.key === "恐れ入りますが、お名前をお聞かせいただけますでしょうか？")?.value;
+      const customer_address = chatHistory.find(item => item.key === "ご住所をお聞かせいただけますでしょうか？")?.value;
+      const customer_phoneNum = value;
+    
+      const reservationData = {  
+        customer_address,
+        customer_name,
+        customer_phoneNum,
+      };
+    
+      try {
+        const res = await fetch('/api/reservation/getReservation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(reservationData)
+        });
+    
+        if (!res.ok) {
+          console.error("API Request Failed:", res.status);
+          return addMessage({ type: "error", content: "予約の取得に失敗しました。" });
+        }
+    
+        const data = await res.json();
+        console.log("API Response:", data);
+    
+        if (Array.isArray(data) && data.length > 0) { 
+          const id = data[0].id;          
+          setChatHistory(prevHistory => [...prevHistory, { key: "reservationId", value: id }]);
+    
+          const reservationConfirm = {
+            type: "confirmReservation",
+            content: "あなたのご予約内容は、次のとおりです。",
+            options: data[0]
+          };
+          addMessage(reservationConfirm);
+          
+        } else {
+          console.warn(" No reservation found.");
+          return addMessage(flowMap["getReservationError"] ?? { type: "error", content: "該当する予約が見つかりませんでした。" });
+        }
+    
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        return addMessage({ type: "error", content: "予期せぬエラーが発生しました。" });
+      }
+    
+    } else {
+      const current = messages[messages.length - 1];    
+      
+      if (reqType && flowMap[reqType]) {
+        setChatHistory(prevHistory => [...prevHistory, { key: current.content, value }]);
+        addMessage(flowMap[reqType]);
+      } else {
+        console.warn(" Unknown request type:", reqType);
+        addMessage({ type: 'button', content: 'それについてはよくわかりません。申し訳ありません。' });
+      }  
+    }
+    
   };
 
   const createReservation = async (date: string,reqType:string) => {
@@ -147,19 +201,14 @@ export const useChatHandler = () => {
           addMessage(reservationConfirm);
       }      
       
-      
-      
     }else{
       if (requirement === "予約変更") {
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaa",reservationData);
-        
         const res = await fetch('/api/reservation/getReservation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
           body: JSON.stringify(reservationData)
         });
         const data = await res.json();
-        console.log(data);
         if (data.length >0) {
           const id = data[0].id;          
           setChatHistory((prevHistory) => [...prevHistory, { key: "reservationId", value:id }]);
@@ -174,7 +223,6 @@ export const useChatHandler = () => {
           return addMessage(flowMap["getReservationError"]);        
         }
        
-        
       }else{
         const reservationConfirm = {
           type:"checkReservation",
@@ -183,15 +231,12 @@ export const useChatHandler = () => {
         }
         addMessage(reservationConfirm);
       }
-      
     }
-   
   };
  
 
   const handleBackClick = () => {
     removeMessage();
   };
-
   return { messages, handleButtonClick, handleInputEnterPress, handleBackClick, createReservation};
 };
