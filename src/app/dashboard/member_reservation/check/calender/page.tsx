@@ -163,9 +163,9 @@ const ReservationManagementPage = () => {
               onClose={() => setModalOpen(false)}
               aria-labelledby="edit-reservation-modal"
               aria-describedby="edit-reservation-description"
-              className='flex w-[50%] justify-center items-center'
+              className='flex justify-center items-center'
             >
-              <div className="flex justify-center items-center z-20 top-2">
+              <div className="flex w-[50%] justify-center items-center z-20 top-2">
                 <div className=" max-h-[400px] bg-[#aac9c9] text-white rounded-lg p-2 pr-0 overflow-auto custom-scrollbar">
                   <table className="w-full ">
                     <thead>
