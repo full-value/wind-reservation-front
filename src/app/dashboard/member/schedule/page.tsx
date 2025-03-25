@@ -2,33 +2,28 @@
 'use client';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/app/layout/DashboardLayout';
-import { FaSearch, FaSort } from "react-icons/fa";
-import CustomButton from '@shared/components/UI/CustomButton';
 import { useDashboard } from '@/hooks/useDashboard';
-import Modal from '@shared/components/UI/Modal';
-import { notify } from '@/utils/notification';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+
 interface User {
-  id?:number;
-  name:string;
-  email:string;
+  id?: number;
+  name: string;
+  email: string;
   // password:string;
-  phoneNum:string;
-  address:string;
-  role:string;
-  permissionStatus:string
+  phoneNum: string;
+  address: string;
+  role: string;
+  permissionStatus: string
 }
 const MemberViewPage = () => {
-  const { getMemberData} = useDashboard();
-  const [users, setUsers] = useState<{ 
-          id: number;
-          name: string;
-          email: string;
-          phoneNum: string;        
-          address: string;  // Use 'string' instead of 'String'
-          createdAt:string;
-        }[]>([]);
+  const { getMemberData } = useDashboard();
+  const [users, setUsers] = useState<{
+    id: number;
+    name: string;
+    email: string;
+    phoneNum: string;
+    address: string;  // Use 'string' instead of 'String'
+    createdAt: string;
+  }[]>([]);
 
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,13 +36,13 @@ const MemberViewPage = () => {
     setCurrentPage(page);
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getMemberData();
         setUsers(data);
         console.log(data);
-        
+
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -55,7 +50,7 @@ const MemberViewPage = () => {
     fetchData();
   }, []);
 
-  
+
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -84,7 +79,7 @@ const MemberViewPage = () => {
     }
     return 0;
   });
-  
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = sortedUsers.slice(indexOfFirstItem, indexOfLastItem);
@@ -97,7 +92,6 @@ const MemberViewPage = () => {
             <h1 className="text-3xl font-bold text-white mb-8">工事職員日程ー覧</h1>
           </div>
           <div className="overflow-x-auto ">
-                    
           </div>
         </div>
 

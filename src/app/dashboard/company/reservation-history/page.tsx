@@ -9,8 +9,8 @@ import Stack from '@mui/material/Stack';
 import CheckIcon from '@public/assets/icons/check_circle_icon.svg';
 
 const ReservationHistory = () => {
-  const {getChangeLogData} = useDashboard();
-  const [changeLogs, setChangeLogs] = useState<{ id: number, timestamp: string, message:string}[]>([]);
+  const { getChangeLogData } = useDashboard();
+  const [changeLogs, setChangeLogs] = useState<{ id: number, timestamp: string, message: string }[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState("asc");
@@ -21,7 +21,7 @@ const ReservationHistory = () => {
   };
 
   useEffect(() => {
-    
+
     const fetchData = async () => {
       try {
         const data = await getChangeLogData();
@@ -32,7 +32,7 @@ const ReservationHistory = () => {
     };
     fetchData();
   }, []);
-  const handleSearch = (e:React.ChangeEvent<HTMLInputElement> ) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
@@ -62,7 +62,7 @@ const ReservationHistory = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentChangeLogs = sortedChangeLogs.slice(indexOfFirstItem, indexOfLastItem);
-  
+
   return (
     <DashboardLayout>
       <div className="flex flex-col bg-[#1b2635]">
@@ -86,7 +86,7 @@ const ReservationHistory = () => {
             <table className="w-fullbg-[#1b2635] text-white rounded-lg overflow-hidden">
               <thead>
                 <tr className="bg-gray-700">
-                  {["番号", "状態","時間", "メッセージ"].map((column) => (
+                  {["番号", "状態", "時間", "メッセージ"].map((column) => (
                     <th
                       key={column}
                       className="px-6 py-3 text-left text-[15px] font-medium uppercase tracking-wider cursor-pointer"
@@ -105,24 +105,24 @@ const ReservationHistory = () => {
               <tbody>
                 {currentChangeLogs.map((logs, index) => (
                   <tr key={logs.id} className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700`}>
-                    <td className="px-6 py-3 whitespace-nowrap">{(currentPage-1)*itemsPerPage+index+1}</td>
+                    <td className="px-6 py-3 whitespace-nowrap">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-6 py-3 whitespace-nowrap"><CheckIcon /></td>
-                    <td className="px-6 py-3 whitespace-nowrap">{new Date(logs.timestamp).toISOString().replace("T", " ").replace(".000Z", "") }</td>
+                    <td className="px-6 py-3 whitespace-nowrap">{new Date(logs.timestamp).toISOString().replace("T", " ").replace(".000Z", "")}</td>
                     <td className="px-6 py-3 w-[75%] whitespace-wrap">{logs.message}</td>
                   </tr>
                 ))}
-              </tbody>         
-            </table> 
+              </tbody>
+            </table>
             <div className="flex justify-center">
-              <Stack spacing={2} className='bg-gray-700 mt-1 rounded-[10px] py-1 px-5'>                    
-                <Pagination 
-                  color="primary" 
-                  count={Math.ceil(sortedChangeLogs.length / itemsPerPage)} 
-                  page={currentPage} 
-                  onChange={handlePageChange} 
-                /> 
+              <Stack spacing={2} className='bg-gray-700 mt-1 rounded-[10px] py-1 px-5'>
+                <Pagination
+                  color="primary"
+                  count={Math.ceil(sortedChangeLogs.length / itemsPerPage)}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                />
               </Stack>
-            </div>         
+            </div>
           </div>
         </div>
       </div>

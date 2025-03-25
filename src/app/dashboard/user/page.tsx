@@ -10,37 +10,35 @@ import { notify } from '@/utils/notification';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 interface User {
-  id?:number;
-  name:string;
-  email:string;
-  // password:string;
-  phoneNum:string;
-  address:string;
-  role:string;
-  permissionStatus:string
+  id?: number;
+  name: string;
+  email: string;
+  phoneNum: string;
+  address: string;
+  role: string;
+  permissionStatus: string
 }
 
 
 
 
 const DashboardPage = () => {
-  const { getUserData,changeUser,createUser, deleteUser} = useDashboard();
-  const [users, setUsers] = useState<{ 
-          id: number;
-          name: string;
-          email: string;
-          phoneNum: string;
-          permissionStatus: string;
-          address: string;  // Use 'string' instead of 'String'
-          role: string; 
-          // password?:string;
-        }[]>([]);
+  const { getUserData, changeUser, createUser, deleteUser } = useDashboard();
+  const [users, setUsers] = useState<{
+    id: number;
+    name: string;
+    email: string;
+    phoneNum: string;
+    permissionStatus: string;
+    address: string;  // Use 'string' instead of 'String'
+    role: string;
+  }[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Add modal state
-  const [modalContent, setModalContent] = useState<{ type: string, users?: User | null } | null>(null); 
-  
+  const [modalContent, setModalContent] = useState<{ type: string, users?: User | null } | null>(null);
+
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [password,setPassword] = useState('');
+  const [password, setPassword] = useState('');
   const [phoneNum, setPhoneNum] = useState('');
   const [address, setAddress] = useState('');
   const [role, setRole] = useState('user');
@@ -56,7 +54,7 @@ const DashboardPage = () => {
     setCurrentPage(page);
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getUserData();
@@ -67,9 +65,6 @@ const DashboardPage = () => {
     };
     fetchData();
   }, []);
-
-  
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
@@ -97,88 +92,86 @@ const DashboardPage = () => {
     }
     return 0;
   });
-  
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = sortedUsers.slice(indexOfFirstItem, indexOfLastItem);
-
-  const openModal = (users: User | null,type: string) => {
+  const openModal = (users: User | null, type: string) => {
     setModalContent({ type, users });
-    
-    if(users !== null){
-      
+
+    if (users !== null) {
+
       setUserName(users.name);
       setUserEmail(users.email);
-      // setPassword(users.password);
       setPhoneNum(users.phoneNum);
       setAddress(users.address);
       setRole(users.role);
       setPermission(users.permissionStatus);
-      
-    }else{
+
+    } else {
       setUserName('');
       setUserEmail('');
       setPhoneNum('');
       setPassword('');
       setAddress('');
-      setRole('');      
-    }   
-    setIsModalOpen(true);    
+      setRole('');
+    }
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false); // Close modal
     setModalContent(null); // Reset modal content
-  }; 
-  
+  };
+
   const handleSave = async () => {
-    const updatedUserData = { 
+    const updatedUserData = {
       id: modalContent?.users?.id ? Number(modalContent.users.id) : 0, // Fallback to 0 if id is undefined
-      name: userName, 
-      email: userEmail, 
-      phoneNum: phoneNum, 
-      address: address, 
+      name: userName,
+      email: userEmail,
+      phoneNum: phoneNum,
+      address: address,
       permissionStatus: permission,
       role: role
     };
     console.log(updatedUserData);
-        
+
     try {
       await changeUser(updatedUserData);
       setUsers(prevUsers =>
         prevUsers.map(user =>
           user.id === updatedUserData.id
             ? {
-                ...updatedUserData,
-                phoneNum: updatedUserData.phoneNum, // Ensure phoneNum is a number
-                role: Array.isArray(updatedUserData.role) ? updatedUserData.role : updatedUserData.role ,
-              }
+              ...updatedUserData,
+              phoneNum: updatedUserData.phoneNum, // Ensure phoneNum is a number
+              role: Array.isArray(updatedUserData.role) ? updatedUserData.role : updatedUserData.role,
+            }
             : user
         )
       );
       notify('success', '成功!', 'データが成果的に変更されました!');
-    } catch (error) {      
+    } catch (error) {
       notify('error', 'エラー!', '資料保管中にエラーが発生しました!');
       console.log(error);
     }
-    handleCloseModal();  
+    handleCloseModal();
   };
   const handleCreate = async () => {
-    const saveUserData = { 
-      name: userName, 
-      password:password,
-      email: userEmail, 
-      phoneNum: phoneNum, 
-      address: address, 
+    const saveUserData = {
+      name: userName,
+      password: password,
+      email: userEmail,
+      phoneNum: phoneNum,
+      address: address,
       role: role
-    }   
-    
+    }
+
     try {
       const createdUser = await createUser(saveUserData);
       if (createdUser) {
         setUsers(prevUsers => [
           ...prevUsers,
-          createdUser 
+          createdUser
         ]);
         notify('success', '成功!', 'データが成果的に保管されました!');
       } else {
@@ -188,24 +181,23 @@ const DashboardPage = () => {
       console.log(error);
       notify('error', 'エラー!', '資料保管中にエラーが発生しました!');
     }
-    handleCloseModal();  
+    handleCloseModal();
   };
-  
-  
-  const handleDelte = async () =>{
-    const id = modalContent?.users?.id; 
-    
+
+
+  const handleDelte = async () => {
+    const id = modalContent?.users?.id;
     try {
       const deletedUser = await deleteUser(Number(id));
       setUsers(prevUsers => {
         return prevUsers.filter(users => users.id !== deletedUser.User.id);
       });
       notify('success', '成功!', 'データが成果的に削除されました!');
-    } catch (error) {      
+    } catch (error) {
       console.log(error);
       notify('error', 'エラー!', '資料削除中にエラーが発生しました!');
     }
-    handleCloseModal(); 
+    handleCloseModal();
   }
   return (
     <DashboardLayout>
@@ -235,7 +227,7 @@ const DashboardPage = () => {
             <table className="w-full #bg-[#233044] text-white rounded-lg overflow-hidden p-3">
               <thead>
                 <tr className="bg-[#667486]">
-                  {["番号","ユーザID", "名前", "メール","電話番号","住所","許可状態","役割"].map((column) => (
+                  {["番号", "ユーザID", "名前", "メール", "電話番号", "住所", "許可状態", "役割"].map((column) => (
                     <th
                       key={column}
                       className="px-6 py-3 text-left text-[15px] font-medium uppercase tracking-wider cursor-pointer"
@@ -246,42 +238,42 @@ const DashboardPage = () => {
                         {sortColumn === column && (
                           <FaSort className={`ml-1 ${sortDirection === "asc" ? "text-gray-400" : "text-gray-200"}`} />
                         )}
-                      </div>  
+                      </div>
                     </th>
                   ))}
                   <th className="px-6 py-3 text-left text-[15px] font-medium uppercase tracking-wider">
-                  動作</th>
+                    動作</th>
                 </tr>
               </thead>
               <tbody>
                 {currentUsers.map((user, index) => (
-                  <tr key={user.id} className={`${index % 2 === 0 ? "bg-[#2a3a53]" : "bg-[#2a364d]"} hover:bg-[#444e5c]`}>
-                    <td className="pl-4 py-3 whitespace-nowrap">{(currentPage-1)*itemsPerPage+index+1}</td>
+                  <tr key={user.id} className={`${index % 2 === 0 ? "bg-[#2a3a53] p-3" : "bg-[#2a364d] p-3"} hover:bg-[#444e5c]`}>
+                    <td className="pl-4 py-3 whitespace-nowrap">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.id}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.name}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.email}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.phoneNum}</td>
                     <td className="pl-4 py-3 whitespace-nowrap">{user.address}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{user.permissionStatus==="inpermission"?"不許可":"許可"}</td>
-                    <td className="pl-4 py-3 whitespace-nowrap">{ user.role.includes("user") ?"ユーザー" :user.role.includes("member") ? "メンバー":"マネージャー"}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{user.permissionStatus === "inpermission" ? "不許可" : "許可"}</td>
+                    <td className="pl-4 py-3 whitespace-nowrap">{user.role.includes("user") ? "ユーザー" : user.role.includes("member") ? "メンバー" : "マネージャー"}</td>
                     <td className="pl-4 py-3 whitespace-nowrap flex gap-3">
                       <button onClick={() => openModal(user, 'edit')} className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded">編集</button>
                       <button onClick={() => openModal(user, 'delete')} className="bg-red-500 hover:bg-red-700 px-4 py-2 rounded">削除</button>
                     </td>
                   </tr>
                 ))}
-              </tbody>         
-            </table> 
+              </tbody>
+            </table>
             <div className="flex justify-center">
-              <Stack spacing={2} className='bg-[#667486] mt-1 rounded-[10px] py-1 px-5'>                    
-                <Pagination 
-                  color="primary" 
-                  count={Math.ceil(sortedUsers.length / itemsPerPage)} 
-                  page={currentPage} 
-                  onChange={handlePageChange} 
-                /> 
+              <Stack spacing={2} className='bg-[#667486] mt-1 rounded-[10px] py-1 px-5'>
+                <Pagination
+                  color="primary"
+                  count={Math.ceil(sortedUsers.length / itemsPerPage)}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                />
               </Stack>
-            </div>         
+            </div>
           </div>
         </div>
 
@@ -289,22 +281,22 @@ const DashboardPage = () => {
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
           {modalContent?.type === 'edit' && (
             <div className="flex inset-0 items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
+              <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
                 <h2 className="text-xl font-bold mb-4">情報編集</h2>
                 <div className="space-y-4">
                   <input
-                      type="text"
-                      placeholder="名前"
-                      value={userName}
-                      onChange={(e) => setUserName(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
+                    type="text"
+                    placeholder="名前"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   <input
-                      type="text"
-                      placeholder="メール"
-                      value={userEmail}
-                      onChange={(e) => setUserEmail(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
+                    type="text"
+                    placeholder="メール"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   <input
                     type="number"
@@ -312,19 +304,19 @@ const DashboardPage = () => {
                     value={phoneNum}
                     onChange={(e) => {
                       const numericValue = e.target.value.replace(/\D/g, '');
-                      if (/^\d{0,14}$/.test(numericValue)) { 
-                        setPhoneNum(numericValue); 
-                        
+                      if (/^\d{0,14}$/.test(numericValue)) {
+                        setPhoneNum(numericValue);
+
                       }
                     }}
                     className="w-full p-2 border border-gray-300 rounded"
                   />
                   <input
-                      type="text"
-                      placeholder="住所"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
+                    type="text"
+                    placeholder="住所"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   <select
                     id="selectPermission"
@@ -337,7 +329,7 @@ const DashboardPage = () => {
                     <option value="member">メンバー</option>
                     <option value="manager">マネージャー</option>
                   </select>
-                 <select
+                  <select
                     id="selectrole"
                     value={permission || ''} // Ensure a string value
                     onChange={(e) => setPermission(e.target.value)}
@@ -347,50 +339,50 @@ const DashboardPage = () => {
                     <option value="inpermission"  >不許可</option>
                     <option value="permission" >許可</option>
                   </select>
-                 
+
                 </div>
                 <div className="flex justify-end mt-4 space-x-2">
-                    <button
-                        onClick={handleSave}
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    >
-                        保存
-                    </button>
-                    <button
-                        onClick={handleCloseModal}
-                        className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
-                    >
-                        取消
-                    </button>
+                  <button
+                    onClick={handleSave}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    保存
+                  </button>
+                  <button
+                    onClick={handleCloseModal}
+                    className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+                  >
+                    取消
+                  </button>
                 </div>
+              </div>
             </div>
-           </div>
           )}
           {modalContent?.type === 'create' && (
             <div className="flex inset-0 items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-[10px] shadow-lg w-full">
-                  <h2 className="text-xl font-bold mb-4">新規ユーザー</h2>
-                  <div className="space-y-4">
+                <h2 className="text-xl font-bold mb-4">新規ユーザー</h2>
+                <div className="space-y-4">
                   <input
-                      type="text"
-                      placeholder="名前"
-                      value={userName}
-                      onChange={(e) => setUserName(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
+                    type="text"
+                    placeholder="名前"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   <input
-                      type="text"
-                      placeholder="メール"
-                      value={userEmail}
-                      onChange={(e) => setUserEmail(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
+                    type="text"
+                    placeholder="メール"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   <input
-                      type="text"
-                      placeholder="パスワード"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
+                    type="text"
+                    placeholder="パスワード"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   <input
                     type="number"
@@ -398,20 +390,20 @@ const DashboardPage = () => {
                     value={phoneNum}
                     onChange={(e) => {
                       const numericValue = e.target.value.replace(/\D/g, '');
-                      if (/^\d{0,14}$/.test(numericValue)) { 
-                        setPhoneNum(numericValue); 
-                        
+                      if (/^\d{0,14}$/.test(numericValue)) {
+                        setPhoneNum(numericValue);
+
                       }
                     }}
                     className="w-full p-2 border border-gray-300 rounded"
                   />
 
                   <input
-                      type="text"
-                      placeholder="住所"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded"
+                    type="text"
+                    placeholder="住所"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   <select
                     id="selectrole"
@@ -420,7 +412,7 @@ const DashboardPage = () => {
                     required
                     className="w-full py-2 px-2 pr-10 rounded-[6px] border mt-1 "
                   >
-                     <option value="user">ユーザー</option>
+                    <option value="user">ユーザー</option>
                     <option value="member">メンバー</option>
                     <option value="manager">マネージャー</option>
                   </select>
@@ -435,20 +427,20 @@ const DashboardPage = () => {
                     <option value="permission" >許可</option>
                   </select>
                 </div>
-                  <div className="flex justify-end mt-4 space-x-2">
-                      <button
-                          onClick={handleCreate}
-                          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                      >
-                          保存
-                      </button>
-                      <button
-                          onClick={handleCloseModal}
-                          className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
-                      >
-                          取消
-                      </button>
-                  </div>
+                <div className="flex justify-end mt-4 space-x-2">
+                  <button
+                    onClick={handleCreate}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    保存
+                  </button>
+                  <button
+                    onClick={handleCloseModal}
+                    className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+                  >
+                    取消
+                  </button>
+                </div>
               </div>
             </div>
           )}

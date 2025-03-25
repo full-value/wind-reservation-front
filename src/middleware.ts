@@ -34,9 +34,9 @@ export async function middleware(req: NextRequest) {
     }
     // For member role, restrict access to only allowed dashboard pages
     if (userRole === 'member') {
-      const allowedPaths = ['/dashboard/','/dashboard/calendar', '/dashboard/flat', '/dashboard/work','/dashboard/message'];
+      const allowedPaths = ['/dashboard/member_reservation/report','/dashboard/member_reservation/report', '/dashboard/member_reservation/message','/dashboard/member_reservation/check','/dashboard/member_reservation/check/calender'];
       if (!allowedPaths.some(path => url === path)) {
-        return NextResponse.redirect(new URL('/dashboard', req.url));
+        return NextResponse.redirect(new URL('/dashboard/member_reservation/check', req.url));
       }
     }
     // Manager role can access all dashboard pages

@@ -246,15 +246,70 @@ export const useDashboard = () => {
     });
   
 
-  return {
-    getFlatData,
-    changeFlat,
-    createFlat,
-    deleteFlat,
-    getWorkData,
-    createWork,
-    changeWork,
-    deleteWork,
+    const getAllReservationData = async () => {
+      try {
+        const response = await fetch('/api/reservation/getAllReservationData', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch all alerts');
+        }        
+        return await response.json();
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Error fetching all alerts';
+        console.error(errorMessage);
+        throw error;
+      }
+    };
+    const getFutureReservationData = async () => {
+        try {
+          const response = await fetch('/api/reservation/getFutureReservationData', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch all alerts');
+          }        
+          return await response.json();
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Error fetching all alerts';
+          console.error(errorMessage);
+          throw error;
+        }
+      };
+
+      const getChatHistory = async (id: number) => {
+        try {
+          console.log(id);
+          
+          const response = await fetch('/api/reservation/getChatHistoryByid', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id }), 
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch chat history');
+          }
+          
+          return await response.json();
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Error fetching chat history';
+          console.error(errorMessage);
+          throw error;
+        }
+      };
+      
+  return {   
     getUserData,
     changeUser,
     deleteUser,
@@ -285,7 +340,11 @@ export const useDashboard = () => {
     getChatData,
     createChat,
     updateChat,
-    deleteChat
+    deleteChat,
+
+    getAllReservationData,
+    getFutureReservationData,
+    getChatHistory
 
   };
 };

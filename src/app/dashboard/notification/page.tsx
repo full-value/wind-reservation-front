@@ -30,8 +30,6 @@ const Notification = () => {
     const fetchData = async () => {
       try {
         const data = await getNotification();
-        
-        // Assuming `data.notificationData` is an array of Notification objects
         setNotificationData(
           data.notificationData.map((n: Notification) => ({
             ...n,
@@ -63,7 +61,7 @@ const Notification = () => {
 
   const handleCheck = async (id: number) => {
     try {
-      await markAsRead(id); 
+      await markAsRead(id);
       setField('Notification_Num', NotificationNum.Notification_Num - 1);
       setNotificationData((prev) =>
         prev.map((notification) =>
@@ -93,10 +91,10 @@ const Notification = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentNotifications = sortedNotifications.slice(indexOfFirstItem, indexOfLastItem);
-  
+
   return (
     <DashboardLayout>
-      <div className="flex flex-col bg-[#1b2635]">     
+      <div className="flex flex-col bg-[#1b2635]">
         <div className="bg-[#1b2635] p-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-white mb-8">重要通知内容</h1>
@@ -143,28 +141,28 @@ const Notification = () => {
                     </td>
                     <td className="px-6 py-3 w-[65%]">{notification.message}</td>
                     <td className="px-6 py-3 text-center">
-                      <input 
-                        type="checkbox" 
-                        checked={!!notification.isRead}  // Ensure boolean value
-                        onChange={() => handleCheck(notification.id)} 
+                      <input
+                        type="checkbox"
+                        checked={!!notification.isRead}  
+                        onChange={() => handleCheck(notification.id)}
                         className="w-5 h-5 cursor-pointer"
-                        disabled={!!notification.isRead} 
+                        disabled={!!notification.isRead}
                       />
                     </td>
                   </tr>
                 ))}
-              </tbody>         
-            </table> 
+              </tbody>
+            </table>
             <div className="flex justify-center">
-              <Stack spacing={2} className='bg-gray-700 mt-1 rounded-[10px] py-1 px-5'>                    
-                <Pagination 
-                  color="primary" 
-                  count={Math.ceil(sortedNotifications.length / itemsPerPage)} 
-                  page={currentPage} 
-                  onChange={handlePageChange} 
-                /> 
+              <Stack spacing={2} className='bg-gray-700 mt-1 rounded-[10px] py-1 px-5'>
+                <Pagination
+                  color="primary"
+                  count={Math.ceil(sortedNotifications.length / itemsPerPage)}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                />
               </Stack>
-            </div>         
+            </div>
           </div>
         </div>
       </div>

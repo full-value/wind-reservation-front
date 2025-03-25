@@ -132,7 +132,7 @@ const Api_Log = () => {
               </thead>
               <tbody>
                 {apiLogs.map((log, index) => (
-                  <tr key={log.id} className={`${index % 2 === 0 ? "bg-[#2a3a53]" : "bg-[#2a364d]"} hover:bg-[#444e5c]`}>
+                  <tr key={log.id} className={`${index % 2 === 0 ? "bg-[#2a3a53]" : "bg-[#2a364d]"} hover:bg-[#444e5c]`} onClick={()=>openModal(log)}>
                     <td className="px-6 py-3 w-[5%] whitespace-nowrap">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-6 py-3 w-[5%] whitespace-nowrap">
                       {log.level === "change" ? <CheckIcon /> : log.level === "error" ? <ErrorIcon /> : log.level === "info" ? <MessageIcon /> : <BellIcon />}
@@ -157,7 +157,7 @@ const Api_Log = () => {
           <div className="absolute z-20 w-[90vw] left-[5vw]">
             <table className="w-fullbg-[#1b2635] text-white rounded-lg overflow-hidden">
               <thead>
-                <tr>
+                <tr className='bg-lime-700'>
                   {["レベル", "リクエストID", "IPアドレス", "ユーザーID", "ステータスコード", "メソッド", "エンドポイント", "タイムスタンプ"].map((header, index) => (
                     <th key={index} className="px-6 py-3 text-left text-[15px] font-medium uppercase tracking-wider cursor-pointer">
                       {header}

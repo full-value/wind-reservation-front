@@ -45,12 +45,10 @@ export const useChatHandler = () => {
     }
   }, []);
 
-  const handleButtonClick = (value: string, reqType: string) => {
-    
+  const handleButtonClick = (value: string, reqType: string) => {    
     if (reqType === "select_requirement" || value === "予約変更" ||  value === "予約照会") {
       setChatHistory([]);      
-    }
-    
+    }    
     if (value === "welcomeAgain") {
       addMessage(flowMap["welcomeAgain"]);
     }else{
@@ -80,8 +78,6 @@ export const useChatHandler = () => {
 
   const handleInputEnterPress = async (value: string, reqType: string) => {  
     const requirement = chatHistory.find(item => item.key === "私たちのサイトにお越しいただきありがとうございます。")?.value||chatHistory.find(item => item.key === "私はどのようにもっとお手伝いできますか？")?.value;
-console.log(reqType,value,requirement);
-
     if (reqType.trim() === "selectDate" && requirement === "予約照会") { 
       const customer_name = chatHistory.find(item => item.key === "恐れ入りますが、お名前をお聞かせいただけますでしょうか？")?.value;
       const customer_address = chatHistory.find(item => item.key === "ご住所をお聞かせいただけますでしょうか？")?.value;
@@ -92,7 +88,6 @@ console.log(reqType,value,requirement);
         customer_name,
         customer_phoneNum,
       };
-    
       try {
         const res = await fetch('/api/reservation/getReservation', {
           method: 'POST',
@@ -148,7 +143,11 @@ console.log(reqType,value,requirement);
     const customer_name = chatHistory.find(item => item.key === "恐れ入りますが、お名前をお聞かせいただけますでしょうか？")?.value;
     const customer_address = chatHistory.find(item => item.key === "ご住所をお聞かせいただけますでしょうか？")?.value;
     const customer_phoneNum = chatHistory.find(item => item.key === "ご連絡させていただける電話番号を教えてください。")?.value;
-    const requirement = chatHistory.find(item => item.key === "私たちのサイトにお越しいただきありがとうございます。")?.value;
+    const firstMatch = chatHistory.find(item => item.key === "私たちのサイトにお越しいただきありがとうございます。");
+    const secondMatch = chatHistory.find(item => item.key === "私はどのようにもっとお手伝いできますか？");
+
+    const requirement = firstMatch?.value || secondMatch?.value || "デフォルトの値";
+
     const reservationData = {  
       customer_address: customer_address,
       start_time: date,
@@ -156,8 +155,16 @@ console.log(reqType,value,requirement);
       customer_phoneNum: customer_phoneNum,
       history:chatHistory
     };        
+    console.log(requirement);
+    console.log(reqType,date);
+    
     if (reqType === "reservate") {
-      if (requirement === "予約変更") {  
+      const req =requirement;
+      console.log(req);
+      
+      if (req === "予約変更") { 
+        console.log(requirement,date);
+         
         const id = chatHistory.find(item => item.key === "reservationId")?.value;
         const start_time = reservationData.start_time;
         
@@ -182,6 +189,8 @@ console.log(reqType,value,requirement);
           addMessage(reservationConfirm);
 
       }else{
+        console.log(requirement,date);
+
         const res = await fetch('/api/reservation/createReservation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
@@ -209,6 +218,8 @@ console.log(reqType,value,requirement);
           body: JSON.stringify(reservationData)
         });
         const data = await res.json();
+        console.log("data:::::",data);
+        
         if (data.length >0) {
           const id = data[0].id;          
           setChatHistory((prevHistory) => [...prevHistory, { key: "reservationId", value:id }]);

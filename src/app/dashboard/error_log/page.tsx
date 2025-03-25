@@ -8,10 +8,6 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import ErrorIcon from'@public/assets/icons/error_icon (log).svg';
 
-
-
-
-
 const Error_Log = () => {
   const {getErrorLogData} = useDashboard();
   const [errorLogs, setErrorLogs] = useState<{ id: number, timestamp: string, message:string}[]>([]);

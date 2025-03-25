@@ -14,7 +14,6 @@ const DashboardPage = () => {
 
   const [totalFlatNum, setTotalFlatNum] = useState(0);
   const [totalWorkNum, setTotalWorkNum] = useState(0);
-  // const [totalUserNum, setTotalUserNum] = useState(0);
   const [totalRservationNum, setTotalRservationNum] = useState(0);
 
   const {getDashboardData} = useDashboard();
@@ -24,7 +23,6 @@ const DashboardPage = () => {
         const data = await getDashboardData();
         setTotalFlatNum(data.totalFlatItems);
         setTotalWorkNum(data.totalWorkItems);
-        // setTotalUserNum(data.totalUserItems);
         setTotalRservationNum(data.totalReservationItems);
         setChartData(data.monthlyReservations);
         setTodayReservationDatas(data.todayReservations);
@@ -56,13 +54,6 @@ const DashboardPage = () => {
                 <p className="font-bold text-[#8e95a3] text-[20px] mt-[-10px]">物件数</p>
               </div>
             </div>
-            {/* <div className="flex w-[300px] gap-5 bg-[#242a38] justify-center px-4 py-5 rounded-[10px] ">
-              <UserIcon className="w-[60px] h-[60px] text-[#afb6c4]" />
-              <div className="flex flex-col mt-[-10px]">
-                <p className="font-semibold text-[#f9fbfc] text-[50px]">{totalUserNum}</p>
-                <p className="font-bold text-[#8e95a3] text-[20px] mt-[-10px]">ユーザー数</p>
-              </div>
-            </div> */}
             <div className="flex w-[300px] gap-5 bg-[#242a38] justify-center px-4 py-5 rounded-[10px] ">
               <ReservationIcon className="w-[60px] h-[60px] text-[#afb6c4]" />
               <div className="flex flex-col mt-[-10px]">
@@ -91,7 +82,6 @@ const DashboardPage = () => {
                     >
                       <div className="flex items-center ">
                         {column.charAt(0).toUpperCase() + column.slice(1)}
-                        
                       </div>
                     </th>
                   ))}

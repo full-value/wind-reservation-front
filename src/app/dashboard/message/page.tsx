@@ -5,7 +5,7 @@ import DashboardLayout from '@/app/layout/DashboardLayout';
 import { FaSearch, FaSort } from "react-icons/fa";
 import BellIcon from '@public/assets/icons/notification-01.svg';
 import MessageIcon from '@public/assets/icons/message_icon.svg';
-import ErrorIcon from'@public/assets/icons/error_icon (log).svg';
+import ErrorIcon from '@public/assets/icons/error_icon (log).svg';
 import { useDashboard } from '@/hooks/useDashboard';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
@@ -39,7 +39,7 @@ const Message = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getMessages(); 
+        const data = await getMessages();
         setMessages(data.unreadAlerts);
         console.log(data.unreadAlerts)
       } catch (error) {
@@ -47,8 +47,8 @@ const Message = () => {
       }
     };
     fetchData();
-  }, []); 
- 
+  }, []);
+
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -65,7 +65,7 @@ const Message = () => {
 
   const handleCheck = async (id: number) => {
     try {
-      await markAsRead(id); 
+      await markAsRead(id);
       setField('Message_Num', NotificationNum.Message_Num - 1);
       setMessages((prev) =>
         prev.map((message) =>
@@ -95,10 +95,10 @@ const Message = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentMessages = sortedMessages.slice(indexOfFirstItem, indexOfLastItem);
-  
+
   return (
     <DashboardLayout>
-      <div className="flex flex-col bg-[#1b2635]">     
+      <div className="flex flex-col bg-[#1b2635]">
 
         <div className="bg-[#1b2635] p-8">
           <div className="flex justify-between items-center">
@@ -120,7 +120,7 @@ const Message = () => {
             <table className="w-fullbg-[#1b2635] text-white rounded-lg overflow-hidden">
               <thead>
                 <tr className="bg-gray-700">
-                  {["番号", "状態", "時間", "メッセージ","区分","チェック"].map((column) => (
+                  {["番号", "状態", "時間", "メッセージ", "区分", "チェック"].map((column) => (
                     <th
                       key={column}
                       className="px-6 py-3 text-left text-[15px] font-medium uppercase tracking-wider cursor-pointer"
@@ -140,35 +140,35 @@ const Message = () => {
                 {currentMessages.map((message, index) => (
                   <tr key={message.id} className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-750"} hover:bg-gray-700`}>
                     <td className="px-6 py-3 whitespace-nowrap">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td className="px-6 py-3 whitespace-nowrap">{message.state === "情報" ? <MessageIcon /> : message.state === "エラー" ? <ErrorIcon /> : <BellIcon /> }</td>
+                    <td className="px-6 py-3 whitespace-nowrap">{message.state === "情報" ? <MessageIcon /> : message.state === "エラー" ? <ErrorIcon /> : <BellIcon />}</td>
                     <td className="px-6 py-3 whitespace-nowrap">
-                      {new Date(message.sent_at).toISOString().replace("T", " ").replace(".000Z", "")}         
+                      {new Date(message.sent_at).toISOString().replace("T", " ").replace(".000Z", "")}
                     </td>
                     <td className="px-6 py-3 w-[50%]">{message.message}</td>
                     <td className="px-6 py-3 ">{message.division}</td>
                     <td className="flex justify-start px-6 py-3 text-center ">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={!!message.isRead}  // Ensure boolean value
-                        onChange={() => handleCheck(message.id)} 
+                        onChange={() => handleCheck(message.id)}
                         className="w-5 h-5 cursor-pointer"
-                        disabled={!!message.isRead} 
+                        disabled={!!message.isRead}
                       />
                     </td>
                   </tr>
                 ))}
-              </tbody>         
-            </table> 
+              </tbody>
+            </table>
             <div className="flex justify-center">
-              <Stack spacing={2} className='bg-gray-700 mt-1 rounded-[10px] py-1 px-5'>                    
-                <Pagination 
-                  color="primary" 
-                  count={Math.ceil(sortedMessages.length / itemsPerPage)} 
-                  page={currentPage} 
-                  onChange={handlePageChange} 
-                /> 
+              <Stack spacing={2} className='bg-gray-700 mt-1 rounded-[10px] py-1 px-5'>
+                <Pagination
+                  color="primary"
+                  count={Math.ceil(sortedMessages.length / itemsPerPage)}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                />
               </Stack>
-            </div>         
+            </div>
           </div>
         </div>
       </div>
